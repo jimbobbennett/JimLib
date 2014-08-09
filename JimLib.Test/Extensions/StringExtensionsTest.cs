@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using JimLib.Extensions;
+using JimBobBennett.JimLib.Extensions;
 using NUnit.Framework;
 
-namespace JimLib.Test.Extensions
+namespace JimBobBennett.JimLib.Test.Extensions
 {
     [TestFixture]
     public class StringExtensionsTest

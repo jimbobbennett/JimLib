@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>JimLib</id>
+  <metadata minClientVersion="2.7.2">
+    <id>JimBobBennett.JimLib</id>
     <version>$version$</version>
-    <title>JimLib Utility Library</title>
+    <title>JimBobBennett.JimLib Utility Library</title>
     <authors>Jim Bennett</authors>
     <owners>Jim Bennett</owners>
     <licenseUrl>https://github.com/jimbobbennett/JimLib/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/jimbobbennett/JimLib</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <iconUrl>https://github.com/jimbobbennett/JimLib/blob/master/JimLib/Jim-32x32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A portable class library containing a set of handy utility classes</description>
     <releaseNotes>Initial version.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>utility</tags>
   </metadata>
+  <files>
+    <file src="JimLib\bin\$Configuration$\JimBobBennett.JimLib.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10\JimBobBennett.JimLib.dll" />
+  </files>
 </package>

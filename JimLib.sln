@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JimLib", ".\JimLib\JimLib.csproj", "{45FD3E6E-342A-45C6-8840-9B091A61B000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JimLib", "JimLib\JimLib.csproj", "{45FD3E6E-342A-45C6-8840-9B091A61B000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JimLib.Test", ".\JimLib.Test\JimLib.Test.csproj", "{2C71793B-38B9-4244-84CA-E2A258007097}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JimLib.Test", "JimLib.Test\JimLib.Test.csproj", "{2C71793B-38B9-4244-84CA-E2A258007097}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{4AD4EDB7-8242-46BE-BB4C-8870ECAC9590}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpec", "NuSpec", "{1E379CEA-9A43-4E99-AB99-ECEE171AEF6A}"
+	ProjectSection(SolutionItems) = preProject
+		JimBobBennett.JimLib.nuspec = JimBobBennett.JimLib.nuspec
 	EndProjectSection
 EndProject
 Global

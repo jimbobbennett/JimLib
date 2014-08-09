@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace JimLib.Collections
+namespace JimBobBennett.JimLib.Collections
 {
     public class ObservableCollectionEx<T>: ObservableCollection<T>
     {
@@ -46,6 +46,20 @@ namespace JimLib.Collections
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
+        /// <summary>
+        /// Updates the collection to match the passed in collection.  Matching is done using the key for each item,
+        /// generated using the <param name="keyFunc"></param>.
+        /// If the item in the passed in collection is not in this collection, they are added.
+        /// If there are any items in this collection that are not in the passed in collection, they are removed.
+        /// If there are any items in the passed in collection that are also in this collection, they are updated using the
+        /// <param name="updateAction"> if this is set.</param>
+        /// If any items are added/removed/updated then a single collection change notification is raised with an action of reset.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key</typeparam>
+        /// <param name="collection">The collection to update this to match</param>
+        /// <param name="keyFunc">A func that returns the key for the item</param>
+        /// <param name="updateAction">An action called for each item in the collections that match to update the values.  If this is null, no updates happen</param>
+        /// <returns>True if any items are added/removed or updated, otherwise false.</returns>
         public bool UpdateToMatch<TKey>(ICollection<T> collection, Func<T, TKey> keyFunc, Func<T, T, bool> updateAction = null)
         {
             CheckReentrancy();
@@ -63,13 +77,13 @@ namespace JimLib.Collections
 
             foreach (var item in Items.Where(i => toDelete.Contains(keyFunc(i))).ToList())
             {
-                Remove(item);
+                Items.Remove(item);
                 updated = true;
             }
 
             foreach (var item in collection.Where(i => toAdd.Contains(keyFunc(i))).ToList())
             {
-                Add(item);
+                Items.Add(item);
                 updated = true;
             }
 
@@ -88,12 +102,10 @@ namespace JimLib.Collections
                     updated = updateAction(oldItem, newItem) | updated;
             }
 
-            return updated;
-        }
+            if (updated)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
-        public bool UpdateToMatch<TKey>(T item, Func<T, TKey> keyFunc, Func<T, T, bool> updateAction = null)
-        {
-            return UpdateToMatch(new List<T> {item}, keyFunc, updateAction);
+            return updated;
         }
     }
 }

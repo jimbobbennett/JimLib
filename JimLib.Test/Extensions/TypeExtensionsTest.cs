@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FluentAssertions;
-using JimLib.Extensions;
+using JimBobBennett.JimLib.Extensions;
 using NUnit.Framework;
 
-namespace JimLib.Test.Extensions
+namespace JimBobBennett.JimLib.Test.Extensions
 {
     [TestFixture]
     public class TypeExtensionsTest
