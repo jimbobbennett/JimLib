@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>JimLib</id>
+    <version>$version$</version>
+    <title>JimLib Utility Library</title>
+    <authors>Jim Bennett</authors>
+    <owners>Jim Bennett</owners>
+    <licenseUrl>https://github.com/jimbobbennett/JimLib/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/jimbobbennett/JimLib</projectUrl>
+    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A portable class library containing a set of handy utility classes</description>
+    <releaseNotes>Initial version.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>utility</tags>
+  </metadata>
+</package>
