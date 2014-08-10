@@ -9,6 +9,8 @@ namespace JimBobBennett.JimLib.Test.Extensions
     [TestFixture]
     public class StringExtensionsTest
     {
+        #region IsNullOrEmpty
+
         [TestCase(null, true)]
         [TestCase("", true)]
         [TestCase("FooBar", false)]
@@ -16,6 +18,10 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             s.IsNullOrEmpty().Should().Be(expected);
         }
+
+        #endregion IsNullOrEmpty
+
+        #region IsNullOrWhiteSpace
 
         [TestCase(null, true)]
         [TestCase("", true)]
@@ -31,6 +37,10 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             s.IsNullOrWhiteSpace().Should().Be(expected);
         }
+
+        #endregion IsNullOrWhiteSpace
+
+        #region Encrypt/Decrypt
 
         [Test]
         public void TestEncryptedStringDoesNotMatchOriginalString()
@@ -103,5 +113,82 @@ namespace JimBobBennett.JimLib.Test.Extensions
             const string s = "FooBar";
             s.Encrypt("Password123456").Decrypt("password");
         }
+
+        #endregion Encrypt/Decrypt
+
+        #region IsUpperCase
+
+        [TestCase("ABCD", true)]
+        [TestCase("Abcd", false)]
+        [TestCase("abcd", false)]
+        [TestCase("", false)]
+        public void IsUpperCaseReturnsTheCorrectValue(string s, bool expected)
+        {
+            s.IsUpperCase().Should().Be(expected);
+        }
+
+        [Test]
+        [ExpectedException(typeof (ArgumentNullException))]
+        public void IsUpperCaseThrowsOnNull()
+        {
+            string s = null;
+// ReSharper disable once ExpressionIsAlwaysNull
+            s.IsUpperCase();
+        }
+
+        #endregion IsUpperCase
+
+        #region MakeInitialLowerCase
+
+        [TestCase("Hello", "hello")]
+        [TestCase("hello", "hello")]
+        [TestCase("HELLO", "hELLO")]
+        public void MakeInitialLowerCaseMakesTheFirstLetterLowerCase(string s, string expected)
+        {
+            s.MakeInitialLowerCase().Should().Be(expected);
+        }
+
+        #endregion MakeInitialLowerCase
+
+        #region ToCamelCase
+
+        [TestCase("Hello", "hello")]
+        [TestCase("Hello world", "helloWorld")]
+        [TestCase("hello world", "helloWorld")]
+        [TestCase("HELLO WORLD", "helloWorld")]
+        public void ToCamelCaseConvertsTheStringToCamelCase(string s, string expected)
+        {
+            s.ToCamelCase().Should().Be(expected);
+        }
+
+        #endregion ToCamelCase
+
+        #region ToPascalCase
+
+        [TestCase("Hello", "Hello")]
+        [TestCase("Hello world", "HelloWorld")]
+        [TestCase("hello world", "HelloWorld")]
+        [TestCase("HELLO WORLD", "HelloWorld")]
+        [TestCase("", "")]
+        [TestCase(null, null)]
+        public void ToPascalCaseConvertsTheStringToPascalCase(string s, string expected)
+        {
+            s.ToPascalCase().Should().Be(expected);
+        }
+
+        #endregion ToPascalCase
+
+        #region RemoveUnderscoresAndDashes
+
+        [TestCase("Hello", "Hello")]
+        [TestCase("Hello_World", "HelloWorld")]
+        [TestCase("Hello-World", "HelloWorld")]
+        [TestCase("Hello-World_Foo-Bar", "HelloWorldFooBar")]
+        public void RemoveUnderscoresAndDashesRemovesAllUnderscoresAndDashes(string s, string expected)
+        {
+            s.RemoveUnderscoresAndDashes().Should().Be(expected);
+        }
+
+        #endregion RemoveUnderscoresAndDashes
     }
 }

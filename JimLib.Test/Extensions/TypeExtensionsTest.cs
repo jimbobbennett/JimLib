@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using FluentAssertions;
+using JimBobBennett.JimLib.Collections;
 using JimBobBennett.JimLib.Extensions;
 using NUnit.Framework;
 
@@ -60,6 +63,27 @@ namespace JimBobBennett.JimLib.Test.Extensions
             properties.Should().Contain(p => p.Name == "BInt" && p.PropertyType == typeof(int));
             properties.Should().Contain(p => p.Name == "CString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "CInt" && p.PropertyType == typeof(int));
+        }
+
+        [Test]
+        public void IsSubTypeOfRawGenericReturnsTrueForClass()
+        {
+            var s = new List<string>();
+            s.GetType().IsSubclassOfRawGeneric(typeof(List<>)).Should().BeTrue();
+        }
+
+        [Test]
+        public void IsSubTypeOfRawGenericReturnsTrueForDerivedClass()
+        {
+            var s = new ObservableCollectionEx<string>();
+            s.GetType().IsSubclassOfRawGeneric(typeof(ObservableCollection<>)).Should().BeTrue();
+        }
+
+        [Test]
+        public void IsSubTypeOfRawGenericReturnsFalseForDifferentClass()
+        {
+            var s = new ObservableCollectionEx<string>();
+            s.GetType().IsSubclassOfRawGeneric(typeof(List<>)).Should().BeFalse();
         }
     }
 }

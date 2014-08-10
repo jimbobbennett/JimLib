@@ -22,5 +22,26 @@ namespace JimBobBennett.JimLib.Extensions
         {
             return type == typeof(object) ? new List<PropertyInfo>() : type.GetTypeInfo().DeclaredProperties.Union(type.GetTypeInfo().BaseType.GetAllProperties()).ToList();
         }
+
+        /// <summary>
+        /// Checks a type to see if it derives from a raw generic (e.g. List[[]])
+        /// </summary>
+        /// <param name="toCheck">The type to check</param>
+        /// <param name="generic">The raw generic type</param>
+        /// <returns>True if toCheck is derived from generic, otherwise false</returns>
+        [Pure]
+        public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
+        {
+            while (toCheck != typeof(object))
+            {
+                var cur = toCheck.GetTypeInfo().IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                if (generic == cur)
+                    return true;
+                
+                toCheck = toCheck.GetTypeInfo().BaseType;
+            }
+
+            return false;
+        }
     }
 }

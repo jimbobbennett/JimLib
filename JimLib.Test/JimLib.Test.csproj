@@ -59,7 +59,9 @@
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Extensions\TypeExtensionsTest.cs" />
+    <Compile Include="Extensions\XmlExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xml\XmlDeserializerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
