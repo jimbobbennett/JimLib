@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using JimBobBennett.JimLib.Extensions;
 
 namespace JimBobBennett.JimLib.Collections
 {
@@ -17,13 +18,16 @@ namespace JimBobBennett.JimLib.Collections
             CheckReentrancy();
 
             if (collection == null) throw new ArgumentNullException("collection");
+            
+            var enumerable = collection.ToList();
 
-            var enumerable = collection as IList<T> ?? collection.ToList();
+            if (!enumerable.Any())
+                return;
 
             foreach (var i in enumerable)
                 Items.Add(i);
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            RaiseAdd(enumerable);
         }
 
         /// <summary> 
@@ -36,14 +40,28 @@ namespace JimBobBennett.JimLib.Collections
 
             if (collection == null) throw new ArgumentNullException("collection");
 
-            var enumerable = collection as IList<T> ?? collection.ToList();
+            var enumerable = collection.ToList();
+
+            var hasItems = this.Any();
+            var existing = this.ToList();
 
             Items.Clear();
 
-            foreach (var i in enumerable)
-                Items.Add(i);
+            if (enumerable.Any())
+            {
+                foreach (var i in enumerable)
+                    Items.Add(i);
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                if (hasItems)
+                    RaiseReset();
+                else
+                    RaiseAdd(enumerable);
+            }
+            else
+            {
+                if (hasItems)
+                    RaiseRemove(existing);
+            }
         }
 
         /// <summary>
@@ -64,51 +82,36 @@ namespace JimBobBennett.JimLib.Collections
         {
             CheckReentrancy();
 
-            if (collection == null) throw new ArgumentNullException("collection");
-            if (keyFunc == null) throw new ArgumentNullException("keyFunc");
-
-            var updated = false;
-
-            var newKeys = new HashSet<TKey>(collection.Select(keyFunc));
-            var oldKeys = new HashSet<TKey>(Items.Select(keyFunc));
-
-            var toDelete = new HashSet<TKey>(oldKeys);
-            toDelete.ExceptWith(newKeys);
-
-            var toAdd = new HashSet<TKey>(newKeys);
-            toAdd.ExceptWith(oldKeys);
-
-            foreach (var item in Items.Where(i => toDelete.Contains(keyFunc(i))).ToList())
-            {
-                Items.Remove(item);
-                updated = true;
-            }
-
-            foreach (var item in collection.Where(i => toAdd.Contains(keyFunc(i))).ToList())
-            {
-                Items.Add(item);
-                updated = true;
-            }
-
-            if (updateAction != null)
-            {
-                var toUpdate = new HashSet<TKey>(oldKeys);
-                toUpdate.IntersectWith(newKeys);
-
-                foreach (var key in toUpdate)
-                {
-                    var oldItem = Items.FirstOrDefault(i => Equals(keyFunc(i), key));
-                    var newItem = collection.FirstOrDefault(i => Equals(keyFunc(i), key));
-
-                    if (!Equals(oldItem, default(T)) && !Equals(newItem, default(T)))
-                        updated = updateAction(oldItem, newItem) | updated;
-                }
-            }
+            var updated = Items.UpdateToMatch(collection, keyFunc, updateAction);
 
             if (updated)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                RaiseReset();
 
             return updated;
+        }
+
+        /// <summary>
+        /// Raises a collection change event with an action of reset
+        /// </summary>
+        private void RaiseReset()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        /// <summary>
+        /// Raises a collection change event with an action of add
+        /// </summary>
+        private void RaiseAdd(IEnumerable<T> items)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items.ToList()));
+        }
+
+        /// <summary>
+        /// Raises a collection change event with an action of remove
+        /// </summary>
+        private void RaiseRemove(IEnumerable<T> items)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items.ToList()));
         }
     }
 }

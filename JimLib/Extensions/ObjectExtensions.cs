@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace JimBobBennett.JimLib.Extensions
 {
@@ -13,6 +14,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// <typeparam name="T">The type of the item</typeparam>
         /// <param name="item">The item to add to the list</param>
         /// <returns>A new <see cref="List{T}"/> containing the given item</returns>
+        [Pure]
         public static List<T> AsList<T>(this T item)
         {
             return new List<T> { item };
@@ -24,6 +26,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// <typeparam name="T">The type of the item</typeparam>
         /// <param name="item">The item to add to the array</param>
         /// <returns>A new array of T containing the given item</returns>
+        [Pure]
         public static T[] AsArray<T>(this T item)
         {
             return new T[] {item};

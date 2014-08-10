@@ -1,4 +1,5 @@
-﻿using JimBobBennett.JimLib.Encryption;
+﻿using System.Diagnostics.Contracts;
+using JimBobBennett.JimLib.Encryption;
 
 namespace JimBobBennett.JimLib.Extensions
 {
@@ -12,6 +13,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// </summary>
         /// <param name="s">The string to check</param>
         /// <returns>true if the string is null or empty, otherwise false</returns>
+        [Pure]
         public static bool IsNullOrEmpty(this string s)
         {
             return string.IsNullOrEmpty(s);
@@ -22,6 +24,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// </summary>
         /// <param name="s">The string to check</param>
         /// <returns>true if the string is null or whitespace, otherwise false</returns>
+        [Pure]
         public static bool IsNullOrWhiteSpace(this string s)
         {
             return string.IsNullOrWhiteSpace(s);
@@ -33,6 +36,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// <param name="s">The string to encrypt</param>
         /// <param name="password">The password to use to encrypt</param>
         /// <returns>The encrypted string</returns>
+        [Pure]
         public static string Encrypt(this string s, string password)
         {
             return Aesgcm.SimpleEncryptWithPassword(s, password);
@@ -44,6 +48,7 @@ namespace JimBobBennett.JimLib.Extensions
         /// <param name="s">The string to encrypt</param>
         /// <param name="password">password key to used to encrypt the string</param>
         /// <returns>The decrypted string</returns>
+        [Pure]
         public static string Decrypt(this string s, string password)
         {
             return Aesgcm.SimpleDecryptWithPassword(s, password);

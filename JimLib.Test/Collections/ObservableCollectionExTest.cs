@@ -44,6 +44,22 @@ namespace JimBobBennett.JimLib.Test.Collections
         }
 
         [Test]
+        public void AddRangeDoesntRaiseAnEventIfNothingIsAdded()
+        {
+            var oc = new ObservableCollectionEx<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var toAdd = new List<string>();
+
+            oc.MonitorEvents();
+            oc.AddRange(toAdd);
+            oc.ShouldNotRaise("CollectionChanged");
+        }
+
+        [Test]
         public void AddRangeOnlyRaisesOneCollectionChangedEventAtTheEnd()
         {
             var oc = new ObservableCollectionEx<string>();
@@ -57,19 +73,23 @@ namespace JimBobBennett.JimLib.Test.Collections
             var itemCount = 0;
             var eventCount = 0;
             var action = NotifyCollectionChangedAction.Add;
+            IList<string> addedItems = null;
 
             oc.CollectionChanged += (sender, args) =>
                 {
                     ++eventCount;
                     itemCount = oc.Count;
                     action = args.Action;
+                    addedItems = args.NewItems.OfType<string>().ToList();
                 };
 
             oc.AddRange(toAdd);
 
             itemCount.Should().Be(2);
             eventCount.Should().Be(1);
-            action.Should().Be(NotifyCollectionChangedAction.Reset);
+            action.Should().Be(NotifyCollectionChangedAction.Add);
+            addedItems.Should().NotBeNull();
+            addedItems.ShouldBeEquivalentTo(toAdd);
         }
 
         [Test]
@@ -107,7 +127,19 @@ namespace JimBobBennett.JimLib.Test.Collections
         }
 
         [Test]
-        public void ClearAndAddRangeOnlyRaisesOneCollectionChangedEventAtTheEnd()
+        public void ClearAddRangeDoesntRaiseAnEventIfNothingIsAddedOrCleared()
+        {
+            var oc = new ObservableCollectionEx<string>();
+
+            var toAdd = new List<string>();
+
+            oc.MonitorEvents();
+            oc.ClearAndAddRange(toAdd);
+            oc.ShouldNotRaise("CollectionChanged");
+        }
+
+        [Test]
+        public void ClearAndAddRangeOnlyRaisesOneResetCollectionChangedEventAtTheEndIfItemsAreClearedAndAdded()
         {
             var oc = new ObservableCollectionEx<string>
             {
@@ -137,6 +169,74 @@ namespace JimBobBennett.JimLib.Test.Collections
             itemCount.Should().Be(2);
             eventCount.Should().Be(1);
             action.Should().Be(NotifyCollectionChangedAction.Reset);
+        }
+
+        [Test]
+        public void ClearAndAddRangeOnlyRaisesOneAddCollectionChangedEventAtTheEndIfNoItemsAreClearedAndSomeAreAdded()
+        {
+            var oc = new ObservableCollectionEx<string>();
+
+            var toAdd = new List<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var itemCount = 0;
+            var eventCount = 0;
+            var action = NotifyCollectionChangedAction.Add;
+            IList<string> addedItems = null;
+
+            oc.CollectionChanged += (sender, args) =>
+            {
+                ++eventCount;
+                itemCount = oc.Count;
+                action = args.Action;
+                addedItems = args.NewItems.OfType<string>().ToList();
+            };
+
+            oc.ClearAndAddRange(toAdd);
+
+            itemCount.Should().Be(2);
+            eventCount.Should().Be(1);
+            action.Should().Be(NotifyCollectionChangedAction.Add);
+            addedItems.ShouldBeEquivalentTo(toAdd);
+        }
+
+        [Test]
+        public void ClearAndAddRangeOnlyRaisesOneRemoveCollectionChangedEventAtTheEndIfNoItemsAreAddedAndSomeAreCleared()
+        {
+            var oc = new ObservableCollectionEx<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var toAdd = new List<string>();
+
+            var itemCount = 0;
+            var eventCount = 0;
+            var action = NotifyCollectionChangedAction.Add;
+            IList<string> removedItems = null;
+
+            oc.CollectionChanged += (sender, args) =>
+            {
+                ++eventCount;
+                itemCount = oc.Count;
+                action = args.Action;
+                removedItems = args.OldItems.OfType<string>().ToList();
+            };
+
+            oc.ClearAndAddRange(toAdd);
+
+            itemCount.Should().Be(0);
+            eventCount.Should().Be(1);
+            action.Should().Be(NotifyCollectionChangedAction.Remove);
+            removedItems.ShouldBeEquivalentTo(new List<string>
+            {
+                "Foo",
+                "Bar"
+            });
         }
 
         [Test]
