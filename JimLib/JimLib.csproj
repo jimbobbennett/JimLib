@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Collections\ObservableCollectionEx.cs" />
     <Compile Include="Encryption\AESGCM.cs" />
+    <Compile Include="Events\EventArgs.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

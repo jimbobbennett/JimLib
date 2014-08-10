@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ObservableCollectionExTest.cs" />
+    <Compile Include="Events\EventArgsTest.cs" />
     <Compile Include="Extensions\CollectionExtensionsTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
