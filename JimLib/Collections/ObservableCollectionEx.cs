@@ -64,6 +64,9 @@ namespace JimBobBennett.JimLib.Collections
         {
             CheckReentrancy();
 
+            if (collection == null) throw new ArgumentNullException("collection");
+            if (keyFunc == null) throw new ArgumentNullException("keyFunc");
+
             var updated = false;
 
             var newKeys = new HashSet<TKey>(collection.Select(keyFunc));
@@ -87,19 +90,19 @@ namespace JimBobBennett.JimLib.Collections
                 updated = true;
             }
 
-            if (updateAction == null) 
-                return updated;
-
-            var toUpdate = new HashSet<TKey>(oldKeys);
-            toUpdate.IntersectWith(newKeys);
-            
-            foreach (var key in toUpdate)
+            if (updateAction != null)
             {
-                var oldItem = Items.FirstOrDefault(i => Equals(keyFunc(i), key));
-                var newItem = collection.FirstOrDefault(i => Equals(keyFunc(i), key));
+                var toUpdate = new HashSet<TKey>(oldKeys);
+                toUpdate.IntersectWith(newKeys);
 
-                if (!Equals(oldItem, default(T)) && !Equals(newItem, default(T)))
-                    updated = updateAction(oldItem, newItem) | updated;
+                foreach (var key in toUpdate)
+                {
+                    var oldItem = Items.FirstOrDefault(i => Equals(keyFunc(i), key));
+                    var newItem = collection.FirstOrDefault(i => Equals(keyFunc(i), key));
+
+                    if (!Equals(oldItem, default(T)) && !Equals(newItem, default(T)))
+                        updated = updateAction(oldItem, newItem) | updated;
+                }
             }
 
             if (updated)
