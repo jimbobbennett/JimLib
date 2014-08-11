@@ -75,6 +75,11 @@ namespace JimBobBennett.JimLib.Xml
 					continue;
 
 				var name = prop.Name.AsNamespaced(Namespace);
+
+			    var attribute = prop.GetCustomAttribute<XmlNameMappingAttribute>();
+			    if (attribute != null)
+			        name = attribute.MappedName;
+
 				var value = GetValueFromXml(root, name);
 
 				if (value == null)

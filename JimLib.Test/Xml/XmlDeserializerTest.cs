@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using FluentAssertions;
+using JimBobBennett.JimLib.Collections;
 using JimBobBennett.JimLib.Xml;
 using NUnit.Framework;
 
@@ -15,6 +17,13 @@ namespace JimBobBennett.JimLib.Test.Xml
     public class InnerItem
     {
         public string First { get; set; }
+        public string Second { get; set; }
+    }
+
+    public class MappedInnerItem
+    {
+        [XmlNameMapping("First")]
+        public string FooBar { get; set; }
         public string Second { get; set; }
     }
 
@@ -34,6 +43,18 @@ namespace JimBobBennett.JimLib.Test.Xml
     {
         public string Third { get; set; }
         public List<InnerItem> InnerItems { get; set; }
+    }
+
+    public class ItemWithObservableInners
+    {
+        public string Third { get; set; }
+        public ObservableCollection<InnerItem> InnerItems { get; set; }
+    }
+
+    public class ItemWithObservableExInners
+    {
+        public string Third { get; set; }
+        public ObservableCollectionEx<InnerItem> InnerItems { get; set; }
     }
 
     public class MyItemsList : List<InnerItem> { }
@@ -118,6 +139,17 @@ namespace JimBobBennett.JimLib.Test.Xml
         }
 
         [Test]
+        public void ReadSimpleMappedClassWorks()
+        {
+            var deserializer = new XmlDeserializer();
+
+            var item = deserializer.Deserialize<MappedInnerItem>(InnerItemXml);
+
+            item.FooBar.Should().Be("Hello");
+            item.Second.Should().Be("World");
+        }
+
+        [Test]
         public void ReadSimpleClassWithLowerCaseAttribtuesWorks()
         {
             var deserializer = new XmlDeserializer();
@@ -134,6 +166,30 @@ namespace JimBobBennett.JimLib.Test.Xml
             var deserializer = new XmlDeserializer();
 
             var item = deserializer.Deserialize<ItemWithInners>(ItemWithInnersXml);
+
+            item.Third.Should().Be("FooBar");
+            item.InnerItems.Should().HaveCount(1);
+            item.InnerItems.Should().OnlyContain(i => i.First == "Hello" && i.Second == "World");
+        }
+
+        [Test]
+        public void ReadClassWithObservableCollectionOfInnersWorks()
+        {
+            var deserializer = new XmlDeserializer();
+
+            var item = deserializer.Deserialize<ItemWithObservableInners>(ItemWithInnersXml);
+
+            item.Third.Should().Be("FooBar");
+            item.InnerItems.Should().HaveCount(1);
+            item.InnerItems.Should().OnlyContain(i => i.First == "Hello" && i.Second == "World");
+        }
+
+        [Test]
+        public void ReadClassWithObservableCollectionExOfInnersWorks()
+        {
+            var deserializer = new XmlDeserializer();
+
+            var item = deserializer.Deserialize<ItemWithObservableExInners>(ItemWithInnersXml);
 
             item.Third.Should().Be("FooBar");
             item.InnerItems.Should().HaveCount(1);
