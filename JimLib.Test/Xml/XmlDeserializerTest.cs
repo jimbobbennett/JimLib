@@ -253,7 +253,7 @@ namespace JimBobBennett.JimLib.Test.Xml
         [Test]
         public void TypesOtherThanStringAreReadCorrectly()
         {
-            var now = DateTime.Now;
+            var now = DateTime.Now.Subtract(TimeSpan.FromSeconds(1));
 
             var trimmedNow = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             var trimmedNowOffSet = new DateTimeOffset(trimmedNow);

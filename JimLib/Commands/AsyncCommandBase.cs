@@ -11,7 +11,8 @@ namespace JimBobBennett.JimLib.Commands
 
         public async void Execute(object parameter)
         {
-            await ExecuteAsync((T)parameter);
+            if (CanExecute(parameter))
+                await ExecuteAsync((T)parameter);
         }
 
         public event EventHandler CanExecuteChanged;

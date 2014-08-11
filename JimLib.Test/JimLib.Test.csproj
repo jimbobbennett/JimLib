@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ObservableCollectionExTest.cs" />
+    <Compile Include="Commands\AsyncCommandTest.cs" />
+    <Compile Include="Commands\RelayCommandTest.cs" />
     <Compile Include="Events\EventArgsTest.cs" />
     <Compile Include="Extensions\CollectionExtensionsTest.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
