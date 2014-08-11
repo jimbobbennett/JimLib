@@ -42,6 +42,11 @@ namespace JimBobBennett.JimLib.Test
             {
                 RaisePropertyChangeForAll();
             }
+
+            public void RaiseWithLambda()
+            {
+                RaisePropertyChanged(() => Second);
+            }
         }
 
         [Test]
@@ -79,6 +84,19 @@ namespace JimBobBennett.JimLib.Test
             x.RaiseForAll();
 
             x.ShouldRaise("PropertyChanged").WithArgs<PropertyChangedEventArgs>(a => a.PropertyName == string.Empty);
+        }
+
+        [Test]
+        public void RaisePropertyChangeWithLambdaWorks()
+        {
+            var x = new NotificationTestClass();
+
+            x.MonitorEvents();
+
+            x.RaiseWithLambda();
+
+            x.ShouldRaisePropertyChangeFor(v => v.Second);
+            x.ShouldRaisePropertyChangeFor(v => v.SecondToUpper);
         }
     }
 }

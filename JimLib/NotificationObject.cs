@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JimBobBennett.JimLib.Annotations;
@@ -13,13 +15,24 @@ namespace JimBobBennett.JimLib
     {
         private static ReadOnlyDictionary<string, List<string>> _dependentProperties;
         private readonly static object SyncObj = new object();
- 
+        
+        protected static PropertyInfo ExtractPropertyInfo<TValue>(Expression<Func<TValue>> propertyExpression)
+        {
+            var memberExpression = (MemberExpression)propertyExpression.Body;
+            return (PropertyInfo)memberExpression.Member;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             RaisePropertyChangeEvent(propertyName);
+        }
+
+        protected void RaisePropertyChanged<TValue>(Expression<Func<TValue>> propertyExpression)
+        {
+            RaisePropertyChangeEvent(ExtractPropertyInfo(propertyExpression).Name);
         }
 
         protected void RaisePropertyChangeForAll()
