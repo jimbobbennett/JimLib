@@ -40,9 +40,10 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             var properties = typeof(A).GetAllProperties().ToList();
 
-            properties.Should().HaveCount(2);
+            properties.Should().HaveCount(3);
             properties.Should().Contain(p => p.Name == "AString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "AInt" && p.PropertyType == typeof(int));
+            properties.Should().Contain(p => p.Name == "VirtualString" && p.PropertyType == typeof(string));
         }
 
         [Test]
@@ -50,9 +51,10 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             var properties = typeof(B).GetAllProperties().ToList();
 
-            properties.Should().HaveCount(4);
+            properties.Should().HaveCount(5);
             properties.Should().Contain(p => p.Name == "AString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "AInt" && p.PropertyType == typeof(int));
+            properties.Should().Contain(p => p.Name == "VirtualString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "BString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "BInt" && p.PropertyType == typeof(int));
         }
@@ -62,9 +64,10 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             var properties = typeof(C).GetAllProperties().ToList();
 
-            properties.Should().HaveCount(6);
+            properties.Should().HaveCount(7);
             properties.Should().Contain(p => p.Name == "AString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "AInt" && p.PropertyType == typeof(int));
+            properties.Should().Contain(p => p.Name == "VirtualString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "BString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "BInt" && p.PropertyType == typeof(int));
             properties.Should().Contain(p => p.Name == "CString" && p.PropertyType == typeof(string));
