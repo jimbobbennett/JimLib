@@ -40,10 +40,14 @@
     <Compile Include="Encryption\AESGCM.cs" />
     <Compile Include="Events\EventArgs.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="NotificationObject.cs" />
+    <Compile Include="NotifyPropertyChangeDependencyAttribute.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\XmlDeserializer.cs" />
     <Compile Include="Xml\XmlNameMappingAttribute.cs" />

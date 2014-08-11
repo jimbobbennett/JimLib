@@ -2,6 +2,7 @@
 
 namespace JimBobBennett.JimLib.Xml
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class XmlNameMappingAttribute : Attribute
     {
         public XmlNameMappingAttribute(string mappedName)

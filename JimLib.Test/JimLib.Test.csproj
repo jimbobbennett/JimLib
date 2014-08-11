@@ -57,10 +57,12 @@
     <Compile Include="Collections\ObservableCollectionExTest.cs" />
     <Compile Include="Events\EventArgsTest.cs" />
     <Compile Include="Extensions\CollectionExtensionsTest.cs" />
+    <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Extensions\TypeExtensionsTest.cs" />
     <Compile Include="Extensions\XmlExtensionsTest.cs" />
+    <Compile Include="NotificationObjectTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\XmlDeserializerTest.cs" />
   </ItemGroup>
