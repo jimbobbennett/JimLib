@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
 using FluentAssertions;
+using JimBobBennett.JimLib.Mvvm;
 using NUnit.Framework;
 
-namespace JimBobBennett.JimLib.Test
+namespace JimBobBennett.JimLib.Test.Mvvm
 {
     [TestFixture]
     public class NotificationObjectTest
@@ -40,7 +41,7 @@ namespace JimBobBennett.JimLib.Test
 
             public void RaiseForAll()
             {
-                RaisePropertyChangeForAll();
+                RaisePropertyChangedForAll();
             }
 
             public void RaiseWithLambda()

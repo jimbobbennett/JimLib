@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JimBobBennett.JimLib
+namespace JimBobBennett.JimLib.Mvvm
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class NotifyPropertyChangeDependencyAttribute : Attribute
