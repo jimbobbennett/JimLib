@@ -20,7 +20,16 @@ namespace JimBobBennett.JimLib.Extensions
         [Pure]
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
-            return type == typeof(object) ? new List<PropertyInfo>() : type.GetTypeInfo().DeclaredProperties.Union(type.GetTypeInfo().BaseType.GetAllProperties()).ToList();
+            var props = type.GetTypeInfo().DeclaredProperties.ToList();
+
+            if (type != typeof (object))
+            {
+                var baseProps = GetAllProperties(type.GetTypeInfo().BaseType);
+                foreach (var propertyInfo in baseProps.Where(pi => props.All(p => p.Name != pi.Name)))
+                    props.Add(propertyInfo);
+            }
+
+            return props;
         }
 
         /// <summary>

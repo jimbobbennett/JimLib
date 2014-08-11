@@ -15,6 +15,7 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             public string AString { get; set; }
             public int AInt { get; set; }
+            public virtual string VirtualString { get; set; }
         }
 
         public class B : A
@@ -27,6 +28,11 @@ namespace JimBobBennett.JimLib.Test.Extensions
         {
             public string CString { get; set; }
             public int CInt { get; set; }
+        }
+
+        public class D : A
+        {
+            public override string VirtualString { get; set; }
         }
 
         [Test]
@@ -63,6 +69,13 @@ namespace JimBobBennett.JimLib.Test.Extensions
             properties.Should().Contain(p => p.Name == "BInt" && p.PropertyType == typeof(int));
             properties.Should().Contain(p => p.Name == "CString" && p.PropertyType == typeof(string));
             properties.Should().Contain(p => p.Name == "CInt" && p.PropertyType == typeof(int));
+        }
+
+        [Test]
+        public void GetAllPropertiesForOverriddenPropertiesDoesntHaveDuplicates()
+        {
+            var properties = typeof(D).GetAllProperties().ToList();
+            var propDict = properties.ToDictionary(p => p.Name, p => p);
         }
 
         [Test]
