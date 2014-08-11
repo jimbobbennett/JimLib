@@ -47,7 +47,7 @@ namespace JimBobBennett.JimLib.Mvvm
             
         }
 
-        protected virtual void OmModelPropertyChanged(string propertyName)
+        protected virtual void OnModelPropertyChanged(string propertyName)
         {
 
         }
@@ -57,7 +57,7 @@ namespace JimBobBennett.JimLib.Mvvm
             if (PropertiesByName.ContainsKey(e.PropertyName))
                 RaisePropertyChanged(e.PropertyName);
 
-            OmModelPropertyChanged(e.PropertyName);
+            OnModelPropertyChanged(e.PropertyName);
         }
     }
 

@@ -62,9 +62,9 @@ namespace JimBobBennett.JimLib.Test.Mvvm
                 }
             }
 
-            protected override void OmModelPropertyChanged(string propertyName)
+            protected override void OnModelPropertyChanged(string propertyName)
             {
-                base.OmModelPropertyChanged(propertyName);
+                base.OnModelPropertyChanged(propertyName);
 
                 RaisedModelPropertyChanges.Add(propertyName);
             }
