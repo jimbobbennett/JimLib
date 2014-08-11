@@ -6,7 +6,7 @@ namespace JimBobBennett.JimLib.Mvvm
     {
         private T _model;
 
-        protected T Model
+        public T Model
         {
             get { return _model; }
             set
@@ -17,6 +17,8 @@ namespace JimBobBennett.JimLib.Mvvm
                 if (npc != null)
                     npc.PropertyChanged -= ModelOnPropertyChanged;
 
+                var old = _model;
+
                 _model = value;
 
                 npc = _model as INotifyPropertyChanged;
@@ -25,7 +27,7 @@ namespace JimBobBennett.JimLib.Mvvm
 
                 RaisePropertyChangedForAll();
 
-                OnModelChanged();
+                OnModelChanged(old, _model);
             }
         }
 
@@ -33,16 +35,29 @@ namespace JimBobBennett.JimLib.Mvvm
         {
             Model = model;
         }
-        
-        protected virtual void OnModelChanged()
+
+        protected ViewModelBase()
+            : this(default(T))
         {
             
+        }
+        
+        protected virtual void OnModelChanged(T oldModel, T newModel)
+        {
+            
+        }
+
+        protected virtual void OmModelPropertyChanged(string propertyName)
+        {
+
         }
 
         private void ModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (PropertiesByName.ContainsKey(e.PropertyName))
                 RaisePropertyChanged(e.PropertyName);
+
+            OmModelPropertyChanged(e.PropertyName);
         }
     }
 

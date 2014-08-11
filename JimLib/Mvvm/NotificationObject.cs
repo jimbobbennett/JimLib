@@ -13,12 +13,23 @@ namespace JimBobBennett.JimLib.Mvvm
 {
     public abstract class NotificationObject : INotifyPropertyChanged
     {
-        private static ReadOnlyDictionary<string, PropertyInfo> _propertiesByName;
-        private static ReadOnlyCollection<PropertyInfo> _properties; 
-        private static ReadOnlyDictionary<string, List<string>> _dependentProperties;
-        private static bool _needPropertyLookup = true;
+        private class ClassPropertyMap
+        {
+            public ClassPropertyMap(ReadOnlyDictionary<string, PropertyInfo> propertiesByName, ReadOnlyCollection<PropertyInfo> properties, ReadOnlyDictionary<string, List<string>> dependentProperties)
+            {
+                PropertiesByName = propertiesByName;
+                Properties = properties;
+                DependentProperties = dependentProperties;
+            }
 
-        private readonly static object SyncObj = new object();
+            public ReadOnlyDictionary<string, PropertyInfo> PropertiesByName { get; private set; }
+            public ReadOnlyCollection<PropertyInfo> Properties { get; private set; }
+            public ReadOnlyDictionary<string, List<string>> DependentProperties { get; private set; }
+        }
+
+        private static readonly Dictionary<Type, ClassPropertyMap> PropertyMaps = new Dictionary<Type, ClassPropertyMap>();
+        
+        private readonly object _syncObj = new object();
         
         protected static PropertyInfo ExtractPropertyInfo<TValue>(Expression<Func<TValue>> propertyExpression)
         {
@@ -57,45 +68,49 @@ namespace JimBobBennett.JimLib.Mvvm
             }
         }
 
-        protected internal IEnumerable<string> GetDependentProperties(string propertyName)
+        private IEnumerable<string> GetDependentProperties(string propertyName)
         {
-            LookUpProperties();
+            var classPropertyMap = LookUpProperties();
 
             List<string> retVal;
-            return _dependentProperties.TryGetValue(propertyName, out retVal) ? retVal : null;
+            return classPropertyMap.DependentProperties.TryGetValue(propertyName, out retVal) ? retVal : null;
         }
 
-        protected internal ReadOnlyDictionary<string, PropertyInfo> PropertiesByName
+        protected ReadOnlyDictionary<string, PropertyInfo> PropertiesByName
         {
             get
             {
-                LookUpProperties();
-                return _propertiesByName;
+                var classPropertyMap = LookUpProperties();
+                return classPropertyMap.PropertiesByName;
             }
         }
 
-        protected internal IEnumerable<PropertyInfo> Properties
+        protected IEnumerable<PropertyInfo> Properties
         {
             get
             {
-                LookUpProperties();
-                return _properties;
+                var classPropertyMap = LookUpProperties();
+                return classPropertyMap.Properties;
             }
         } 
 
-        private void LookUpProperties()
+        private ClassPropertyMap LookUpProperties()
         {
-            lock (SyncObj)
+            lock (_syncObj)
             {
-                if (!_needPropertyLookup) return;
+                ClassPropertyMap classPropertyMap;
+                var type = GetType();
+
+                if (PropertyMaps.TryGetValue(type, out classPropertyMap))
+                    return classPropertyMap;
 
                 var dict = new Dictionary<string, List<string>>();
 
-                _properties = new ReadOnlyCollection<PropertyInfo>(GetType().GetAllProperties().ToList());
+                var properties = new ReadOnlyCollection<PropertyInfo>(type.GetAllProperties().ToList());
 
-                _propertiesByName = new ReadOnlyDictionary<string, PropertyInfo>(_properties.ToDictionary(p => p.Name, p => p));
+                var propertiesByName = new ReadOnlyDictionary<string, PropertyInfo>(properties.ToDictionary(p => p.Name, p => p));
 
-                foreach (var propertyInfo in _properties)
+                foreach (var propertyInfo in properties)
                 {
                     var attributes = propertyInfo.GetCustomAttributes<NotifyPropertyChangeDependencyAttribute>().ToList();
 
@@ -103,8 +118,12 @@ namespace JimBobBennett.JimLib.Mvvm
                         dict[propertyInfo.Name] = attributes.Select(a => a.DependentPropertyName).ToList();
                 }
 
-                _dependentProperties = new ReadOnlyDictionary<string, List<string>>(dict);
-                _needPropertyLookup = false;
+                var dependentProperties = new ReadOnlyDictionary<string, List<string>>(dict);
+                
+                classPropertyMap = new ClassPropertyMap(propertiesByName, properties, dependentProperties);
+                PropertyMaps.Add(type, classPropertyMap);
+
+                return classPropertyMap;
             }
         }
     }
