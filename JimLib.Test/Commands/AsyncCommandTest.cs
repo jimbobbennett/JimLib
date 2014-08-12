@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using JimBobBennett.JimLib.Commands;
+using JimBobBennett.JimLib.Extensions;
 using NUnit.Framework;
 
 namespace JimBobBennett.JimLib.Test.Commands
@@ -71,7 +72,7 @@ namespace JimBobBennett.JimLib.Test.Commands
         }
 
         [Test]
-        public void ExecuteExecutesTheAction()
+        public async void ExecuteExecutesTheAction()
         {
             var run = false;
 
@@ -81,6 +82,8 @@ namespace JimBobBennett.JimLib.Test.Commands
             });
 
             command.Execute(null);
+
+            await this.WaitForAsync(() => run);
 
             run.Should().BeTrue();
         }
@@ -181,7 +184,7 @@ namespace JimBobBennett.JimLib.Test.Commands
         }
 
         [Test]
-        public void ExecuteExecutesTheAction()
+        public async void ExecuteExecutesTheAction()
         {
             var run = false;
 
@@ -191,6 +194,8 @@ namespace JimBobBennett.JimLib.Test.Commands
             });
 
             command.Execute(null);
+
+            await this.WaitForAsync(() => run);
 
             run.Should().BeTrue();
         }

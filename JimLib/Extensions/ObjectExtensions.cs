@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 
 namespace JimBobBennett.JimLib.Extensions
 {
@@ -30,6 +32,36 @@ namespace JimBobBennett.JimLib.Extensions
         public static T[] AsArray<T>(this T item)
         {
             return new T[] {item};
+        }
+
+        /// <summary>
+        /// Wasits for the given condition to occur, timing out after the given timeout
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="condition"></param>
+        /// <param name="timeout"></param>
+        /// <returns>true if the condition passes within the timeout, otherwise false</returns>
+        [Pure]
+        public static async Task<bool> WaitForAsync(this object o, Func<bool> condition, int timeout = 1000)
+        {
+            return await WaitForCondition(condition, timeout);
+        }
+
+        private static async Task<bool> WaitForCondition(Func<bool> condition, int timeout)
+        {
+            var wait = 0;
+            const int sleep = 10;
+
+            while (wait < timeout)
+            {
+                if (condition())
+                    return true;
+
+                await Task.Delay(sleep);
+                wait += sleep;
+            }
+
+            return condition();
         }
     }
 }
