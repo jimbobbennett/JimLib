@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace JimBobBennett.JimLib.Mvvm
 {
@@ -58,6 +59,17 @@ namespace JimBobBennett.JimLib.Mvvm
                 RaisePropertyChanged(e.PropertyName);
 
             OnModelPropertyChanged(e.PropertyName);
+        }
+
+        protected void FireEvent(EventHandler handler)
+        {
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        protected void FireEvent<TArgs>(EventHandler<TArgs> handler, TArgs args)
+            where TArgs : EventArgs
+        {
+            if (handler != null) handler(this, args);
         }
     }
 

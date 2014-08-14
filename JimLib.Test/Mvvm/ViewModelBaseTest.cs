@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using FluentAssertions;
+using JimBobBennett.JimLib.Events;
 using JimBobBennett.JimLib.Mvvm;
 using NUnit.Framework;
+using Org.BouncyCastle.Crypto.Macs;
 
 namespace JimBobBennett.JimLib.Test.Mvvm
 {
@@ -77,6 +80,33 @@ namespace JimBobBennett.JimLib.Test.Mvvm
 
             public List<MyModel> Models { get; private set; }
             public List<string> RaisedModelPropertyChanges { get; set; } 
+        }
+
+        public class MyEventArgs : EventArgs
+        {
+            
+        }
+
+        public class ViewModelWithEvents : ViewModelBase
+        {
+            public event EventHandler EventWithNoArgs;
+            public event EventHandler<MyEventArgs> EventWithBasicArgs;
+            public event EventHandler<EventArgs<string>> EventWithStringArgs;
+
+            public void FireEventWithNoArgs()
+            {
+                FireEvent(EventWithNoArgs);
+            }
+
+            public void FireEventWithBasicArgs()
+            {
+                FireEvent(EventWithBasicArgs, new MyEventArgs());
+            }
+
+            public void FireEventWithStringArgs(string value)
+            {
+                FireEvent(EventWithStringArgs, new EventArgs<string>(value));
+            }
         }
 
         [Test]
@@ -174,6 +204,33 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.First = "Hello";
 
             vm.RaisedModelPropertyChanges.Should().OnlyContain(s => s == "First");
+        }
+
+        [Test]
+        public void FireEventFiresEventWithNoArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.MonitorEvents();
+            vm.FireEventWithNoArgs();
+            vm.ShouldRaise("EventWithNoArgs").WithArgs<EventArgs>(a => a == EventArgs.Empty);
+        }
+
+        [Test]
+        public void FireEventFiresEventWithBasicArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.MonitorEvents();
+            vm.FireEventWithBasicArgs();
+            vm.ShouldRaise("EventWithBasicArgs").WithArgs<MyEventArgs>(a => true);
+        }
+
+        [Test]
+        public void FireEventFiresEventWithPArameterisedArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.MonitorEvents();
+            vm.FireEventWithStringArgs("HelloWorld");
+            vm.ShouldRaise("EventWithStringArgs").WithArgs<EventArgs<string>>(a => a.Value == "HelloWorld");
         }
     }
 }
