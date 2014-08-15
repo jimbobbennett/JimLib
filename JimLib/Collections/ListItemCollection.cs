@@ -63,6 +63,12 @@ namespace JimBobBennett.JimLib.Collections
             }
         }
 
+        public void AddRange(IEnumerable<ListItemInnerCollection<T>> items)
+        {
+            lock (_syncObj)
+                _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
+        }
+
         public void ClearAndAddRange(IEnumerable<Tuple<string, IEnumerable<T>>> items)
         {
             lock (_syncObj)
@@ -70,6 +76,12 @@ namespace JimBobBennett.JimLib.Collections
                 _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
                     .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)).ToList());
             }
+        }
+
+        public void ClearAndAddRange(IEnumerable<ListItemInnerCollection<T>> items)
+        {
+            lock (_syncObj)
+                _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
         }
     }
 }

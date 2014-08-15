@@ -184,6 +184,43 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "Hello"
             };
 
+            list.AddRange(new List<ListItemInnerCollection<string>>
+            {
+                new ListItemInnerCollection<string>("Bob", toAdd),
+                new ListItemInnerCollection<string>("Dave", toAddSecond),
+            });
+
+            list.Count.Should().Be(2);
+
+            list[0].Title.Should().Be("Bob");
+            list[0].Should().ContainInOrder(toAdd);
+            list[0].Should().OnlyContain(s => toAdd.Contains(s));
+            list[0].Count.Should().Be(2);
+
+            list[1].Title.Should().Be("Dave");
+            list[1].Should().ContainInOrder(toAddSecond);
+            list[1].Should().OnlyContain(s => toAddSecond.Contains(s));
+            list[1].Count.Should().Be(3);
+        }
+
+        [Test]
+        public void AddRangeAddsARangeEnumerableOfTuple()
+        {
+            var list = new ListItemCollection<string>();
+
+            var toAdd = new List<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var toAddSecond = new List<string>
+            {
+                "Foo",
+                "Bar",
+                "Hello"
+            };
+
             list.AddRange(new List<Tuple<string, IEnumerable<string>>>
             {
                 Tuple.Create("Bob", (IEnumerable<string>) toAdd),
@@ -305,7 +342,52 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "Bar",
                 "Hello"
             };
-            
+
+            list.AddGroup("FooBar", initial);
+
+            list.ClearAndAddRange(new List<ListItemInnerCollection<string>>
+            {
+                new ListItemInnerCollection<string>("Bob", toAdd),
+                new ListItemInnerCollection<string>("Dave", toAddSecond),
+            });
+
+            list.Count.Should().Be(2);
+
+            list[0].Title.Should().Be("Bob");
+            list[0].Should().ContainInOrder(toAdd);
+            list[0].Should().OnlyContain(s => toAdd.Contains(s));
+            list[0].Count.Should().Be(2);
+
+            list[1].Title.Should().Be("Dave");
+            list[1].Should().ContainInOrder(toAddSecond);
+            list[1].Should().OnlyContain(s => toAddSecond.Contains(s));
+            list[1].Count.Should().Be(3);
+        }
+
+        [Test]
+        public void ClearAndAddRangeClearsAndAddsARangeFromEnumerableOfTuple()
+        {
+            var list = new ListItemCollection<string>();
+
+            var initial = new List<string>
+            {
+                "A",
+                "B"
+            };
+
+            var toAdd = new List<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var toAddSecond = new List<string>
+            {
+                "Foo",
+                "Bar",
+                "Hello"
+            };
+
             list.AddGroup("FooBar", initial);
 
             list.ClearAndAddRange(new List<Tuple<string, IEnumerable<string>>>
