@@ -36,6 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\ListItemCollection.cs" />
+    <Compile Include="Collections\ListItemInnerCollection.cs" />
     <Compile Include="Collections\ObservableCollectionEx.cs" />
     <Compile Include="Commands\AsyncCommand.cs" />
     <Compile Include="Commands\AsyncCommandBase.cs" />

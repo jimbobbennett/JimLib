@@ -9,6 +9,14 @@ namespace JimBobBennett.JimLib.Collections
 {
     public class ObservableCollectionEx<T>: ObservableCollection<T>
     {
+        public ObservableCollectionEx(IEnumerable<T> collection) : base(collection)
+        {
+        }
+
+        public ObservableCollectionEx()
+        {
+        }
+
         /// <summary> 
         /// Adds the elements of the specified collection to the end of the ObservableCollection(Of T). 
         /// A collection changed notification is raised at the end of the add, not after each item.

@@ -15,15 +15,13 @@ namespace JimBobBennett.JimLib.Mvvm
     {
         private class ClassPropertyMap
         {
-            public ClassPropertyMap(ReadOnlyDictionary<string, PropertyInfo> propertiesByName, ReadOnlyCollection<PropertyInfo> properties, ReadOnlyDictionary<string, List<string>> dependentProperties)
+            public ClassPropertyMap(ReadOnlyDictionary<string, PropertyInfo> propertiesByName, ReadOnlyDictionary<string, List<string>> dependentProperties)
             {
                 PropertiesByName = propertiesByName;
-                Properties = properties;
                 DependentProperties = dependentProperties;
             }
 
             public ReadOnlyDictionary<string, PropertyInfo> PropertiesByName { get; private set; }
-            public ReadOnlyCollection<PropertyInfo> Properties { get; private set; }
             public ReadOnlyDictionary<string, List<string>> DependentProperties { get; private set; }
         }
 
@@ -31,12 +29,6 @@ namespace JimBobBennett.JimLib.Mvvm
         
         private readonly object _syncObj = new object();
         
-        protected static PropertyInfo ExtractPropertyInfo<TValue>(Expression<Func<TValue>> propertyExpression)
-        {
-            var memberExpression = (MemberExpression)propertyExpression.Body;
-            return (PropertyInfo)memberExpression.Member;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -47,7 +39,7 @@ namespace JimBobBennett.JimLib.Mvvm
 
         protected void RaisePropertyChanged<TValue>(Expression<Func<TValue>> propertyExpression)
         {
-            RaisePropertyChangedEvent(ExtractPropertyInfo(propertyExpression).Name);
+            RaisePropertyChangedEvent(this.ExtractPropertyName(propertyExpression));
         }
 
         protected void RaisePropertyChangedForAll()
@@ -83,15 +75,6 @@ namespace JimBobBennett.JimLib.Mvvm
                 var classPropertyMap = LookUpProperties();
                 return classPropertyMap.PropertiesByName;
             }
-        }
-
-        protected IEnumerable<PropertyInfo> Properties
-        {
-            get
-            {
-                var classPropertyMap = LookUpProperties();
-                return classPropertyMap.Properties;
-            }
         } 
 
         private ClassPropertyMap LookUpProperties()
@@ -120,7 +103,7 @@ namespace JimBobBennett.JimLib.Mvvm
 
                 var dependentProperties = new ReadOnlyDictionary<string, List<string>>(dict);
                 
-                classPropertyMap = new ClassPropertyMap(propertiesByName, properties, dependentProperties);
+                classPropertyMap = new ClassPropertyMap(propertiesByName, dependentProperties);
                 PropertyMaps.Add(type, classPropertyMap);
 
                 return classPropertyMap;

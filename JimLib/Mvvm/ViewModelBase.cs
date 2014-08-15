@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace JimBobBennett.JimLib.Mvvm
 {
     public abstract class ViewModelBase<T> : NotificationObject
     {
         private T _model;
+        private bool _isBusy;
 
         public T Model
         {
@@ -70,6 +72,30 @@ namespace JimBobBennett.JimLib.Mvvm
             where TArgs : EventArgs
         {
             if (handler != null) handler(this, args);
+        }
+
+        protected internal async Task RunWithBusyIndicatorAsync(Action action)
+        {
+            try
+            {
+                IsBusy = true;
+                await Task.Factory.StartNew(action);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            protected internal set
+            {
+                if (value.Equals(_isBusy)) return;
+                _isBusy = value;
+                RaisePropertyChanged();
+            }
         }
     }
 

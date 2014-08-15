@@ -587,5 +587,25 @@ namespace JimBobBennett.JimLib.Test.Collections
         }
 
         #endregion UpdateToMatch
+
+        #region Constructor
+
+        [Test]
+        public void ConstructorWithItemsSetsTheItems()
+        {
+            var toAdd = new List<string>
+            {
+                "Foo",
+                "Bar"
+            };
+
+            var oc = new ObservableCollectionEx<string>(toAdd);
+
+            oc.Should().ContainInOrder(toAdd);
+            oc.Should().OnlyContain(s => toAdd.Contains(s));
+            oc.Count.Should().Be(2);
+        }
+
+        #endregion Constructor
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace JimBobBennett.JimLib.Extensions
@@ -62,6 +64,19 @@ namespace JimBobBennett.JimLib.Extensions
             }
 
             return condition();
+        }
+
+        [Pure]
+        public static PropertyInfo ExtractPropertyInfo<TValue>(this object o, Expression<Func<TValue>> propertyExpression)
+        {
+            var memberExpression = (MemberExpression)propertyExpression.Body;
+            return (PropertyInfo)memberExpression.Member;
+        }
+
+        [Pure]
+        public static string ExtractPropertyName<TValue>(this object o, Expression<Func<TValue>> propertyExpression)
+        {
+            return o.ExtractPropertyInfo(propertyExpression).Name;
         }
     }
 }

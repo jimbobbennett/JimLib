@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using FluentAssertions;
 using JimBobBennett.JimLib.Events;
 using JimBobBennett.JimLib.Mvvm;
 using NUnit.Framework;
-using Org.BouncyCastle.Crypto.Macs;
 
 namespace JimBobBennett.JimLib.Test.Mvvm
 {
@@ -79,7 +79,18 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             }
 
             public List<MyModel> Models { get; private set; }
-            public List<string> RaisedModelPropertyChanges { get; set; } 
+            public List<string> RaisedModelPropertyChanges { get; set; }
+        }
+
+        class MyNonGenericViewModel : ViewModelBase
+        {
+            public MyNonGenericViewModel(object model) : base(model)
+            {
+            }
+
+            public MyNonGenericViewModel()
+            {
+            }
         }
 
         public class MyEventArgs : EventArgs
@@ -160,11 +171,9 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             var vm = new MyViewModel(model);
 
             vm.MonitorEvents();
-            //model.MonitorEvents();
 
             model.Second = 100;
 
-            //model.ShouldRaisePropertyChangeFor(m => m.Second);
             vm.ShouldNotRaise("PropertyChanged");
         }
 
@@ -231,6 +240,75 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.MonitorEvents();
             vm.FireEventWithStringArgs("HelloWorld");
             vm.ShouldRaise("EventWithStringArgs").WithArgs<EventArgs<string>>(a => a.Value == "HelloWorld");
+        }
+
+        [Test]
+        public async Task BusyIndicatorIsToggledAroundRunAction()
+        {
+            var vm = new ViewModelWithEvents();
+
+            var busyStates = new List<bool> {vm.IsBusy};
+
+            await vm.RunWithBusyIndicatorAsync(() => busyStates.Add(vm.IsBusy));
+            busyStates.Add(vm.IsBusy);
+
+            busyStates.Should().HaveCount(3);
+            busyStates.Should().ContainInOrder(new List<bool>
+            {
+                false,
+                true,
+                false
+            });
+        }
+
+        [Test]
+        public async Task BusyIndicatorRaisesPropertyChangeBeforeRunAction()
+        {
+            var vm = new ViewModelWithEvents();
+
+            vm.MonitorEvents();
+
+            await vm.RunWithBusyIndicatorAsync(() => vm.ShouldRaisePropertyChangeFor(v => v.IsBusy));
+        }
+
+        [Test]
+        public async Task BusyIndicatorRaisesPropertyChangeAfterRunAction()
+        {
+            var vm = new ViewModelWithEvents();
+
+            await vm.RunWithBusyIndicatorAsync(vm.MonitorEvents);
+            vm.ShouldRaisePropertyChangeFor(v => v.IsBusy);
+        }
+
+        [Test]
+        public void IsBusyDoesntRaisePropertyChangeIfTheValueDoesntChange()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.MonitorEvents();
+            vm.IsBusy = false;
+            vm.ShouldNotRaisePropertyChangeFor(v => v.IsBusy);
+        }
+
+        [Test]
+        public void ModelIsSetOnConstructorForNonGeneric()
+        {
+            var model = new List<string>();
+            var vm = new MyNonGenericViewModel(model);
+            vm.Model.Should().Be(model);
+        }
+
+        [Test]
+        public void ModelIsSetToNullIfNotPassedToConstructorForNonGeneric()
+        {
+            var vm = new MyNonGenericViewModel();
+            vm.Model.Should().BeNull();
+        }
+
+        [Test]
+        public void ModelIsSetToNullIfNotPassedToConstructorForGeneric()
+        {
+            var vm = new MyViewModel();
+            vm.Model.Should().BeNull();
         }
     }
 }
