@@ -87,6 +87,7 @@ namespace JimBobBennett.JimLib.Mvvm
             }
         }
 
+        [NotifyPropertyChangeDependency("IsActive")]
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -97,6 +98,8 @@ namespace JimBobBennett.JimLib.Mvvm
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsActive { get { return !IsBusy; } }
     }
 
     public abstract class ViewModelBase : ViewModelBase<object>

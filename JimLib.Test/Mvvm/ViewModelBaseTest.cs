@@ -243,6 +243,17 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         }
 
         [Test]
+        public async Task RunActionIsRun()
+        {
+            var isRun = false;
+
+            var vm = new ViewModelWithEvents();
+            await vm.RunWithBusyIndicatorAsync(() => isRun = true);
+
+            isRun.Should().BeTrue();
+        }
+
+        [Test]
         public async Task BusyIndicatorIsToggledAroundRunAction()
         {
             var vm = new ViewModelWithEvents();
@@ -287,6 +298,24 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.MonitorEvents();
             vm.IsBusy = false;
             vm.ShouldNotRaisePropertyChangeFor(v => v.IsBusy);
+        }
+
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void IsActiveIsOppositeOfIsBusy(bool isBusy, bool expected)
+        {
+            var vm = new MyViewModel {IsBusy = isBusy};
+
+            vm.IsActive.Should().Be(expected);
+        }
+
+        [Test]
+        public void SettingIsBusyRaisesPropertyChangedForIsActive()
+        {
+            var vm = new MyViewModel();
+            vm.MonitorEvents();
+            vm.IsBusy = true;
+            vm.ShouldRaisePropertyChangeFor(v => v.IsActive);
         }
 
         [Test]
