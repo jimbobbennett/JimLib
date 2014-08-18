@@ -9,6 +9,7 @@ namespace JimBobBennett.JimLib.Mvvm
     {
         private T _model;
         private bool _isBusy;
+        private string _busyMessage;
 
         public T Model
         {
@@ -80,12 +81,13 @@ namespace JimBobBennett.JimLib.Mvvm
             if (handler != null) handler(this, new EventArgs<TValue>(value));
         }
 
-        protected internal async Task RunWithBusyIndicatorAsync(Action action)
+        protected internal async Task RunWithBusyIndicatorAsync(Func<Task> action, string message = default(string))
         {
             try
             {
                 IsBusy = true;
-                await Task.Factory.StartNew(action);
+                BusyMessage = message;
+                await action();
             }
             finally
             {
@@ -101,6 +103,17 @@ namespace JimBobBennett.JimLib.Mvvm
             {
                 if (value.Equals(_isBusy)) return;
                 _isBusy = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string BusyMessage
+        {
+            get { return _busyMessage; }
+            set
+            {
+                if (Equals(_busyMessage, value)) return;
+                _busyMessage = value;
                 RaisePropertyChanged();
             }
         }

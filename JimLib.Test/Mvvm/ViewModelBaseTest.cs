@@ -262,7 +262,10 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             var isRun = false;
 
             var vm = new ViewModelWithEvents();
-            await vm.RunWithBusyIndicatorAsync(() => isRun = true);
+            await vm.RunWithBusyIndicatorAsync(async () =>
+                {
+                    isRun = true;
+                });
 
             isRun.Should().BeTrue();
         }
@@ -274,7 +277,12 @@ namespace JimBobBennett.JimLib.Test.Mvvm
 
             var busyStates = new List<bool> {vm.IsBusy};
 
-            await vm.RunWithBusyIndicatorAsync(() => busyStates.Add(vm.IsBusy));
+            await vm.RunWithBusyIndicatorAsync(async () =>
+                {
+                    await Task.Delay(100);
+                    busyStates.Add(vm.IsBusy);
+                });
+
             busyStates.Add(vm.IsBusy);
 
             busyStates.Should().HaveCount(3);
@@ -293,7 +301,7 @@ namespace JimBobBennett.JimLib.Test.Mvvm
 
             vm.MonitorEvents();
 
-            await vm.RunWithBusyIndicatorAsync(() => vm.ShouldRaisePropertyChangeFor(v => v.IsBusy));
+            await vm.RunWithBusyIndicatorAsync(async () => vm.ShouldRaisePropertyChangeFor(v => v.IsBusy));
         }
 
         [Test]
@@ -301,7 +309,7 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         {
             var vm = new ViewModelWithEvents();
 
-            await vm.RunWithBusyIndicatorAsync(vm.MonitorEvents);
+            await vm.RunWithBusyIndicatorAsync(async () => vm.MonitorEvents());
             vm.ShouldRaisePropertyChangeFor(v => v.IsBusy);
         }
 
