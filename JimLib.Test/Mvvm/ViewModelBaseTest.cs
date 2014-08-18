@@ -118,6 +118,11 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             {
                 FireEvent(EventWithStringArgs, new EventArgs<string>(value));
             }
+
+            public void FireEventWithStringArgsPassingValue(string value)
+            {
+                FireEvent(EventWithStringArgs, value);
+            }
         }
 
         [Test]
@@ -234,11 +239,20 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         }
 
         [Test]
-        public void FireEventFiresEventWithPArameterisedArgs()
+        public void FireEventFiresEventWithParameterisedArgs()
         {
             var vm = new ViewModelWithEvents();
             vm.MonitorEvents();
             vm.FireEventWithStringArgs("HelloWorld");
+            vm.ShouldRaise("EventWithStringArgs").WithArgs<EventArgs<string>>(a => a.Value == "HelloWorld");
+        }
+
+        [Test]
+        public void FireEventFiresEventWithParameterisedArgsPassedByValue()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.MonitorEvents();
+            vm.FireEventWithStringArgsPassingValue("HelloWorld");
             vm.ShouldRaise("EventWithStringArgs").WithArgs<EventArgs<string>>(a => a.Value == "HelloWorld");
         }
 

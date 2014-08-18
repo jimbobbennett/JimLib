@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using JimBobBennett.JimLib.Events;
 
 namespace JimBobBennett.JimLib.Mvvm
 {
@@ -72,6 +73,11 @@ namespace JimBobBennett.JimLib.Mvvm
             where TArgs : EventArgs
         {
             if (handler != null) handler(this, args);
+        }
+
+        protected void FireEvent<TValue>(EventHandler<EventArgs<TValue>> handler, TValue value)
+        {
+            if (handler != null) handler(this, new EventArgs<TValue>(value));
         }
 
         protected internal async Task RunWithBusyIndicatorAsync(Action action)
