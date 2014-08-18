@@ -5,7 +5,7 @@ using JimBobBennett.JimLib.Events;
 
 namespace JimBobBennett.JimLib.Mvvm
 {
-    public abstract class ViewModelBase<T> : NotificationObject
+    public abstract class ViewModelBase<T> : NotificationObject, IBusy
     {
         private T _model;
         private bool _isBusy;

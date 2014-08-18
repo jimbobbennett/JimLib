@@ -51,6 +51,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Mvvm\IBusy.cs" />
     <Compile Include="Mvvm\NotificationObject.cs" />
     <Compile Include="Mvvm\NotifyPropertyChangeDependencyAttribute.cs" />
     <Compile Include="Mvvm\ViewModelBase.cs" />
