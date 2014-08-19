@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using JimBobBennett.JimLib.Events;
+using JimBobBennett.JimLib.Extensions;
 
 namespace JimBobBennett.JimLib.Mvvm
 {
@@ -61,6 +62,9 @@ namespace JimBobBennett.JimLib.Mvvm
         {
             if (PropertiesByName.ContainsKey(e.PropertyName))
                 RaisePropertyChanged(e.PropertyName);
+
+            if (e.PropertyName.IsNullOrEmpty())
+                RaisePropertyChangedForAll();
 
             OnModelPropertyChanged(e.PropertyName);
         }

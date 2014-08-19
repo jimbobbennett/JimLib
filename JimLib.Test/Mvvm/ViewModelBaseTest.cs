@@ -361,5 +361,14 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             var vm = new MyViewModel();
             vm.Model.Should().BeNull();
         }
+
+        [Test]
+        public void RaisingAPropertyChangeForAllOnTheModelRaisesItOnTheViewModelAsWell()
+        {
+            var vm = new MyViewModel(new MyModel());
+            vm.MonitorEvents();
+            vm.Model.RaisePropertyChangedForAll();
+            vm.ShouldRaise("PropertyChanged").WithArgs<PropertyChangedEventArgs>(e => e.PropertyName == string.Empty);
+        }
     }
 }

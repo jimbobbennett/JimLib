@@ -32,17 +32,17 @@ namespace JimBobBennett.JimLib.Mvvm
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected internal void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             RaisePropertyChangedEvent(propertyName);
         }
 
-        protected void RaisePropertyChanged<TValue>(Expression<Func<TValue>> propertyExpression)
+        protected internal void RaisePropertyChanged<TValue>(Expression<Func<TValue>> propertyExpression)
         {
             RaisePropertyChangedEvent(this.ExtractPropertyName(propertyExpression));
         }
 
-        protected void RaisePropertyChangedForAll()
+        protected internal void RaisePropertyChangedForAll()
         {
             RaisePropertyChangedEvent(string.Empty);
         }
