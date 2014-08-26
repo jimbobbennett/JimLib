@@ -453,5 +453,19 @@ namespace JimBobBennett.JimLib.Test.Collections
             eventCount.Should().Be(1);
             action.Should().Be(NotifyCollectionChangedAction.Reset);
         }
+
+        [Test]
+        public void ClearAndAddRangeWithExistingWorks()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> {"Foo"});
+
+            var items = new List<ListItemInnerCollection<string>>();
+            items.Add(new ListItemInnerCollection<string>("Hello", new List<string> { "Bar" }));
+
+            list.ClearAndAddRange(items);
+
+            list.Count.Should().Be(1);
+        }
     }
 }

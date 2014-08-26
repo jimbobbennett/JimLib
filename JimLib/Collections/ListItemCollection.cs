@@ -74,14 +74,14 @@ namespace JimBobBennett.JimLib.Collections
             lock (_syncObj)
             {
                 _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
-                    .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)).ToList());
+                    .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)));
             }
         }
 
         public void ClearAndAddRange(IEnumerable<ListItemInnerCollection<T>> items)
         {
             lock (_syncObj)
-                _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
+                _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)));
         }
     }
 }

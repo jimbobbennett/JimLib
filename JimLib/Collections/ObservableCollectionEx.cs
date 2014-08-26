@@ -47,13 +47,13 @@ namespace JimBobBennett.JimLib.Collections
             CheckReentrancy();
 
             if (collection == null) throw new ArgumentNullException("collection");
-
-            var enumerable = collection.ToList();
-
+            
             var hasItems = this.Any();
             var existing = this.ToList();
 
             Items.Clear();
+
+            var enumerable = collection.ToList();
 
             if (enumerable.Any())
             {
