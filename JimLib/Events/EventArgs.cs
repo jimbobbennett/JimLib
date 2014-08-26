@@ -4,7 +4,7 @@ namespace JimBobBennett.JimLib.Events
 {
     public class EventArgs<T> : EventArgs
     {
-        public T Value { get; private set; }
+        public T Value { get; set; }
 
         public EventArgs(T value)
         {

@@ -95,7 +95,7 @@ namespace JimBobBennett.JimLib.Test.Mvvm
 
         public class MyEventArgs : EventArgs
         {
-            
+            public bool Passed { get; set; }   
         }
 
         public class ViewModelWithEvents : ViewModelBase
@@ -109,19 +109,19 @@ namespace JimBobBennett.JimLib.Test.Mvvm
                 FireEvent(EventWithNoArgs);
             }
 
-            public void FireEventWithBasicArgs()
+            public MyEventArgs FireEventWithBasicArgs()
             {
-                FireEvent(EventWithBasicArgs, new MyEventArgs());
+                return FireEvent(EventWithBasicArgs, new MyEventArgs());
             }
 
-            public void FireEventWithStringArgs(string value)
+            public EventArgs<string> FireEventWithStringArgs(string value)
             {
-                FireEvent(EventWithStringArgs, new EventArgs<string>(value));
+                return FireEvent(EventWithStringArgs, new EventArgs<string>(value));
             }
 
-            public void FireEventWithStringArgsPassingValue(string value)
+            public string FireEventWithStringArgsPassingValue(string value)
             {
-                FireEvent(EventWithStringArgs, value);
+                return FireEvent(EventWithStringArgs, value);
             }
         }
 
@@ -239,6 +239,15 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         }
 
         [Test]
+        public void FireEventFiresEventWithBasicArgsAndReturnsArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.EventWithBasicArgs += (s, e) => e.Passed = true;
+            var retVal = vm.FireEventWithBasicArgs();
+            retVal.Passed.Should().BeTrue();
+        }
+
+        [Test]
         public void FireEventFiresEventWithParameterisedArgs()
         {
             var vm = new ViewModelWithEvents();
@@ -248,12 +257,30 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         }
 
         [Test]
+        public void FireEventFiresEventWithParameterisedArgsAndReturnsArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.EventWithStringArgs += (s, e) => e.Value = "FooBar";
+            var args = vm.FireEventWithStringArgs("HelloWorld");
+            args.Value.Should().Be("FooBar");
+        }
+
+        [Test]
         public void FireEventFiresEventWithParameterisedArgsPassedByValue()
         {
             var vm = new ViewModelWithEvents();
             vm.MonitorEvents();
             vm.FireEventWithStringArgsPassingValue("HelloWorld");
             vm.ShouldRaise("EventWithStringArgs").WithArgs<EventArgs<string>>(a => a.Value == "HelloWorld");
+        }
+
+        [Test]
+        public void FireEventFiresEventWithParameterisedArgsPassedByValueAndReturnsArgs()
+        {
+            var vm = new ViewModelWithEvents();
+            vm.EventWithStringArgs += (s, e) => e.Value = "FooBar";
+            var args = vm.FireEventWithStringArgsPassingValue("HelloWorld");
+            args.Should().Be("FooBar");
         }
 
         [Test]

@@ -74,15 +74,23 @@ namespace JimBobBennett.JimLib.Mvvm
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        protected void FireEvent<TArgs>(EventHandler<TArgs> handler, TArgs args)
+        protected TArgs FireEvent<TArgs>(EventHandler<TArgs> handler, TArgs args)
             where TArgs : EventArgs
         {
-            if (handler != null) handler(this, args);
+            if (handler != null)
+                handler(this, args);
+
+            return args;
         }
 
-        protected void FireEvent<TValue>(EventHandler<EventArgs<TValue>> handler, TValue value)
+        protected TValue FireEvent<TValue>(EventHandler<EventArgs<TValue>> handler, TValue value)
         {
-            if (handler != null) handler(this, new EventArgs<TValue>(value));
+            var eventArgs = new EventArgs<TValue>(value);
+
+            if (handler != null)
+                handler(this, eventArgs);
+
+            return eventArgs.Value;
         }
 
         protected internal async Task RunWithBusyIndicatorAsync(Func<Task> action, string message = default(string))
