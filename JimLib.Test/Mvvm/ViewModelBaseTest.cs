@@ -289,7 +289,9 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             var isRun = false;
 
             var vm = new ViewModelWithEvents();
+#pragma warning disable 1998
             await vm.RunWithBusyIndicatorAsync(async () =>
+#pragma warning restore 1998
                 {
                     isRun = true;
                 });
@@ -328,7 +330,9 @@ namespace JimBobBennett.JimLib.Test.Mvvm
 
             vm.MonitorEvents();
 
+#pragma warning disable 1998
             await vm.RunWithBusyIndicatorAsync(async () => vm.ShouldRaisePropertyChangeFor(v => v.IsBusy));
+#pragma warning restore 1998
         }
 
         [Test]
@@ -336,7 +340,9 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         {
             var vm = new ViewModelWithEvents();
 
+#pragma warning disable 1998
             await vm.RunWithBusyIndicatorAsync(async () => vm.MonitorEvents());
+#pragma warning restore 1998
             vm.ShouldRaisePropertyChangeFor(v => v.IsBusy);
         }
 
@@ -396,6 +402,12 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.MonitorEvents();
             vm.Model.RaisePropertyChangedForAll();
             vm.ShouldRaise("PropertyChanged").WithArgs<PropertyChangedEventArgs>(e => e.PropertyName == string.Empty);
+        }
+
+        [Test]
+        public void Fail()
+        {
+            Assert.Fail();
         }
     }
 }
