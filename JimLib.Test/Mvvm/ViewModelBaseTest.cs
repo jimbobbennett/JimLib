@@ -403,11 +403,5 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.Model.RaisePropertyChangedForAll();
             vm.ShouldRaise("PropertyChanged").WithArgs<PropertyChangedEventArgs>(e => e.PropertyName == string.Empty);
         }
-
-        [Test]
-        public void Fail()
-        {
-            Assert.Fail();
-        }
     }
 }
