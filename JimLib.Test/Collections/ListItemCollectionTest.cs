@@ -540,5 +540,46 @@ namespace JimBobBennett.JimLib.Test.Collections
             list.Should().Contain(g => g.Title == "Hello" && g.Count == 2 &&
                 g.Contains("Foo") && g.Contains("Bar"));
         }
+
+        [Test]
+        public void GroupsAreSorted()
+        {
+            var list = new ListItemCollection<string>();
+            
+            list.AddGroup("Bob", new List<string>
+            {
+                "Foo",
+                "Bar"
+            });
+
+            list.AddGroup("Dave", new List<string>
+            {
+                "Hello",
+                "World"
+            });
+
+            list[0].Title.Should().Be("Bob");
+            list[1].Title.Should().Be("Dave");
+
+            list.TitleSortOrder = new List<string>
+            {
+                "Dave",
+                "Colin",
+                "Bob"
+            };
+
+            list[0].Title.Should().Be("Dave");
+            list[1].Title.Should().Be("Bob");
+            
+            list.AddGroup("Colin", new List<string>
+            {
+                "FooBar",
+                "HelloWorld"
+            });
+
+            list[0].Title.Should().Be("Dave");
+            list[1].Title.Should().Be("Colin");
+            list[2].Title.Should().Be("Bob");
+        }
     }
 }

@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\DefinedSortOrderComparerTest.cs" />
     <Compile Include="Collections\ListItemCollectionTest.cs" />
     <Compile Include="Collections\ListItemInnerCollectionTest.cs" />
     <Compile Include="Collections\ObservableCollectionExTest.cs" />

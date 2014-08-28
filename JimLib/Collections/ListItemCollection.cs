@@ -10,6 +10,8 @@ namespace JimBobBennett.JimLib.Collections
     {
         private readonly object _syncObj = new object();
         private readonly ObservableCollectionEx<ListItemInnerCollection<T>> _list;
+        private IEnumerable<string> _titleSortOrder;
+        private DefinedSortOrderComparer<ListItemInnerCollection<T>, string> _comparer;
 
         private ListItemCollection(ObservableCollectionEx<ListItemInnerCollection<T>> list) : base(list)
         {
@@ -30,6 +32,8 @@ namespace JimBobBennett.JimLib.Collections
 
                 _list.Add(new ListItemInnerCollection<T>(title, items));
 
+                Sort();
+
                 return true;
             }
         }
@@ -44,6 +48,8 @@ namespace JimBobBennett.JimLib.Collections
                     return false;
 
                 _list.Remove(toRemove);
+
+                Sort();
 
                 return true;
             }
@@ -65,6 +71,8 @@ namespace JimBobBennett.JimLib.Collections
                     AddGroup(title, item.AsList());
                 else
                     group.Add(item);
+
+                Sort();
             }
         }
 
@@ -79,6 +87,8 @@ namespace JimBobBennett.JimLib.Collections
                 foreach (var inner in removed.Where(i => !i.Any()))
                     RemoveGroup(inner.Title);
 
+                Sort();
+
                 return true;
             }
         }
@@ -89,13 +99,17 @@ namespace JimBobBennett.JimLib.Collections
             {
                 _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
                     .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)).ToList());
+                Sort();
             }
         }
 
         public void AddRange(IEnumerable<ListItemInnerCollection<T>> items)
         {
             lock (_syncObj)
+            {
                 _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
+                Sort();
+            }
         }
 
         public void ClearAndAddRange(IEnumerable<Tuple<string, IEnumerable<T>>> items)
@@ -104,13 +118,45 @@ namespace JimBobBennett.JimLib.Collections
             {
                 _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
                     .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)));
+                Sort();
             }
         }
 
         public void ClearAndAddRange(IEnumerable<ListItemInnerCollection<T>> items)
         {
             lock (_syncObj)
+            {
                 _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)));
+                Sort();
+            }
+        }
+
+        public IEnumerable<string> TitleSortOrder
+        {
+            get { return _titleSortOrder; }
+            set
+            {
+                _titleSortOrder = value.ToList();
+
+                if (_titleSortOrder != null)
+                    _comparer = new DefinedSortOrderComparer<ListItemInnerCollection<T>, string>(_titleSortOrder, i => i.Title);
+                else
+                    _comparer = null;
+
+                Sort();
+            }
+        }
+
+        private void Sort()
+        {
+            lock (_syncObj)
+            {
+                if (_comparer == null) return;
+
+                var list = _list.ToList();
+                list.Sort(_comparer);
+                _list.ClearAndAddRange(list);
+            }
         }
     }
 }
