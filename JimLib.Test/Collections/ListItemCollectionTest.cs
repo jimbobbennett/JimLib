@@ -558,6 +558,7 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "World"
             });
 
+            list.Should().HaveCount(2);
             list[0].Title.Should().Be("Bob");
             list[1].Title.Should().Be("Dave");
 
@@ -568,6 +569,7 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "Bob"
             };
 
+            list.Should().HaveCount(2);
             list[0].Title.Should().Be("Dave");
             list[1].Title.Should().Be("Bob");
             
@@ -577,9 +579,17 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "HelloWorld"
             });
 
+            list.Should().HaveCount(3);
             list[0].Title.Should().Be("Dave");
             list[1].Title.Should().Be("Colin");
             list[2].Title.Should().Be("Bob");
+
+            list.Delete("FooBar");
+            list.Delete("HelloWorld");
+
+            list.Should().HaveCount(2);
+            list[0].Title.Should().Be("Dave");
+            list[1].Title.Should().Be("Bob");
         }
     }
 }

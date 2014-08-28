@@ -9,6 +9,8 @@ namespace JimBobBennett.JimLib.Collections
 {
     public class ObservableCollectionEx<T>: ObservableCollection<T>
     {
+        private bool _stopEvents;
+
         public ObservableCollectionEx(IEnumerable<T> collection) : base(collection)
         {
         }
@@ -98,11 +100,26 @@ namespace JimBobBennett.JimLib.Collections
             return updated;
         }
 
+        public bool StopEvents
+        {
+            get { return _stopEvents; }
+            set
+            {
+                if (_stopEvents == value) return;
+
+                _stopEvents = value;
+
+                if (!_stopEvents)
+                    RaiseReset();
+            }
+        }
+
         /// <summary>
         /// Raises a collection change event with an action of reset
         /// </summary>
         private void RaiseReset()
         {
+            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
@@ -111,6 +128,7 @@ namespace JimBobBennett.JimLib.Collections
         /// </summary>
         private void RaiseAdd(IEnumerable<T> items)
         {
+            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items.ToList()));
         }
 
@@ -119,6 +137,7 @@ namespace JimBobBennett.JimLib.Collections
         /// </summary>
         private void RaiseRemove(IEnumerable<T> items)
         {
+            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items.ToList()));
         }
     }

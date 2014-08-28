@@ -20,7 +20,7 @@ namespace JimBobBennett.JimLib.Collections
 
         public ListItemCollection() : this(new ObservableCollectionEx<ListItemInnerCollection<T>>())
         {
-            
+
         }
 
         public bool AddGroup(string title, IEnumerable<T> items)
@@ -30,9 +30,23 @@ namespace JimBobBennett.JimLib.Collections
                 if (_list.Any(l => l.Title == title))
                     return false;
 
-                _list.Add(new ListItemInnerCollection<T>(title, items));
+                var comparer = _comparer;
 
-                Sort();
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    _list.Add(new ListItemInnerCollection<T>(title, items));
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
 
                 return true;
             }
@@ -49,8 +63,6 @@ namespace JimBobBennett.JimLib.Collections
 
                 _list.Remove(toRemove);
 
-                Sort();
-
                 return true;
             }
         }
@@ -65,14 +77,28 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
             {
-                var group = this.FirstOrDefault(g => g.Title == title);
+                var comparer = _comparer;
 
-                if (group == null)
-                    AddGroup(title, item.AsList());
-                else
-                    group.Add(item);
+                if (comparer != null)
+                    _list.StopEvents = true;
 
-                Sort();
+                try
+                {
+                    var group = this.FirstOrDefault(g => g.Title == title);
+
+                    if (group == null)
+                        AddGroup(title, item.AsList());
+                    else
+                        group.Add(item);
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
             }
         }
 
@@ -87,8 +113,6 @@ namespace JimBobBennett.JimLib.Collections
                 foreach (var inner in removed.Where(i => !i.Any()))
                     RemoveGroup(inner.Title);
 
-                Sort();
-
                 return true;
             }
         }
@@ -97,9 +121,24 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
             {
-                _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
-                    .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)).ToList());
-                Sort();
+                var comparer = _comparer;
+
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
+                        .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)).ToList());
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
             }
         }
 
@@ -107,8 +146,23 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
             {
-                _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
-                Sort();
+                var comparer = _comparer;
+
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    _list.AddRange(items.Where(i => _list.All(l => l.Title != i.Title)).ToList());
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
             }
         }
 
@@ -116,9 +170,24 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
             {
-                _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
-                    .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)));
-                Sort();
+                var comparer = _comparer;
+
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Item1))
+                        .Select(i => new ListItemInnerCollection<T>(i.Item1, i.Item2)));
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
             }
         }
 
@@ -126,8 +195,23 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
             {
-                _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)));
-                Sort();
+                var comparer = _comparer;
+
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    _list.ClearAndAddRange(items.Where(i => _list.All(l => l.Title != i.Title)));
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
             }
         }
 
