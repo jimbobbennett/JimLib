@@ -467,5 +467,78 @@ namespace JimBobBennett.JimLib.Test.Collections
 
             list.Count.Should().Be(1);
         }
+
+        [Test]
+        public void AddAddsToNewGroupIfGroupDoesntExist()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo" });
+
+            list.Add("World", "Bar");
+
+            list.Should().HaveCount(2);
+            list.Should().Contain(g => g.Title == "Hello" && g.Count == 1 && g[0] == "Foo");
+            list.Should().Contain(g => g.Title == "World" && g.Count == 1 && g[0] == "Bar");
+        }
+
+        [Test]
+        public void AddAddsToExistingGroupIfGroupDoesExist()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo" });
+
+            list.Add("Hello", "Bar");
+
+            list.Should().HaveCount(1);
+            list.Should().Contain(g => g.Title == "Hello" && g.Count == 2 && 
+                g.Contains("Foo") && g.Contains("Bar"));
+        }
+
+        [Test]
+        public void DeleteDeletesItem()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo", "Bar" });
+            list.Delete("Foo");
+
+            list.Should().HaveCount(1);
+            list.Should().Contain(g => g.Title == "Hello" && g.Count == 1 && g[0] == "Bar");
+        }
+
+        [Test]
+        public void DeleteReturnsTrueIfItDeletesTheItem()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo", "Bar" });
+            list.Delete("Foo").Should().BeTrue();
+        }
+
+        [Test]
+        public void DeleteReturnsFalseIfTheItemDoesnExist()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo", "Bar" });
+            list.Delete("World").Should().BeFalse();
+
+            list.Should().HaveCount(1);
+            list.Should().Contain(g => g.Title == "Hello" && g.Count == 2 &&
+                g.Contains("Foo") && g.Contains("Bar"));
+        }
+
+        [Test]
+        public void DeleteRemovesEmptyGroups()
+        {
+            var list = new ListItemCollection<string>();
+            list.AddGroup("Hello", new List<string> { "Foo", "Bar" });
+            list.AddGroup("World", new List<string> { "FooBar" });
+
+            list.Should().HaveCount(2);
+
+            list.Delete("FooBar").Should().BeTrue();
+
+            list.Should().HaveCount(1);
+            list.Should().Contain(g => g.Title == "Hello" && g.Count == 2 &&
+                g.Contains("Foo") && g.Contains("Bar"));
+        }
     }
 }

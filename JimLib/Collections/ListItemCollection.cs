@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using JimBobBennett.JimLib.Extensions;
 
 namespace JimBobBennett.JimLib.Collections
 {
@@ -52,6 +53,34 @@ namespace JimBobBennett.JimLib.Collections
         {
             lock (_syncObj)
                 _list.Clear();
+        }
+
+        public void Add(string title, T item)
+        {
+            lock (_syncObj)
+            {
+                var group = this.FirstOrDefault(g => g.Title == title);
+
+                if (group == null)
+                    AddGroup(title, item.AsList());
+                else
+                    group.Add(item);
+            }
+        }
+
+        public bool Delete(T item)
+        {
+            lock (_syncObj)
+            {
+                var removed = this.Where(i => i.Remove(item)).ToList();
+
+                if (!removed.Any()) return false;
+
+                foreach (var inner in removed.Where(i => !i.Any()))
+                    RemoveGroup(inner.Title);
+
+                return true;
+            }
         }
 
         public void AddRange(IEnumerable<Tuple<string, IEnumerable<T>>> items)
