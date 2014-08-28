@@ -239,7 +239,16 @@ namespace JimBobBennett.JimLib.Collections
 
                 var list = _list.ToList();
                 list.Sort(_comparer);
-                _list.ClearAndAddRange(list);
+
+                var needSort = false;
+                for (var i = 0; i < list.Count && !needSort; i++)
+                {
+                    if (list[i] != _list[i])
+                        needSort = true;
+                }
+
+                if (needSort)
+                    _list.ClearAndAddRange(list);
             }
         }
     }
