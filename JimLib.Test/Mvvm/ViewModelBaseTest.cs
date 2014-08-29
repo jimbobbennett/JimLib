@@ -403,5 +403,27 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             vm.Model.RaisePropertyChangedForAll();
             vm.ShouldRaise("PropertyChanged").WithArgs<PropertyChangedEventArgs>(e => e.PropertyName == string.Empty);
         }
+
+        [Test]
+        public void HasModelIsTrueWhenModelIsSet()
+        {
+            var vm = new MyViewModel(new MyModel());
+            vm.HasModel.Should().BeTrue();
+        }
+
+        [Test]
+        public void HasModelIsFalseWhenModelIsNotSet()
+        {
+            var vm = new MyViewModel();
+            vm.HasModel.Should().BeFalse();
+        }
+
+        [Test]
+        public void HasModelIsTrueWhenModelIsNotSetThenSet()
+        {
+            var vm = new MyViewModel();
+            vm.Model = new MyModel();
+            vm.HasModel.Should().BeTrue();
+        }
     }
 }

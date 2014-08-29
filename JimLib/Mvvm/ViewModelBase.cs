@@ -37,6 +37,8 @@ namespace JimBobBennett.JimLib.Mvvm
             }
         }
 
+        public bool HasModel { get { return !Equals(Model, null); } }
+
         protected ViewModelBase(T model)
         {
             Model = model;
