@@ -72,10 +72,16 @@ namespace JimBobBennett.JimLib.Test.Mvvm
                 RaisedModelPropertyChanges.Add(propertyName);
             }
 
+            [NotifyPropertyChangeDependency("FirstToUpper")]
             public string First
             {
                 get { return Model.First; }
                 set { Model.First = value; }
+            }
+
+            public string FirstToUpper
+            {
+                get { return First.ToUpper(); }
             }
 
             public List<MyModel> Models { get; private set; }
@@ -424,6 +430,30 @@ namespace JimBobBennett.JimLib.Test.Mvvm
             var vm = new MyViewModel();
             vm.Model = new MyModel();
             vm.HasModel.Should().BeTrue();
+        }
+
+        [Test]
+        public void NotifyPropertyChangeDependencyWorksForPassthrough()
+        {
+            var vm = new MyViewModel(new MyModel());
+
+            vm.MonitorEvents();
+
+            vm.First = "FooBar";
+
+            vm.ShouldRaisePropertyChangeFor(v => v.FirstToUpper);
+        }
+
+        [Test]
+        public void NotifyPropertyChangeDependencyWorksForPassthroughWhenSetOnModel()
+        {
+            var vm = new MyViewModel(new MyModel());
+
+            vm.MonitorEvents();
+
+            vm.Model.First = "FooBar";
+
+            vm.ShouldRaisePropertyChangeFor(v => v.FirstToUpper);
         }
     }
 }
