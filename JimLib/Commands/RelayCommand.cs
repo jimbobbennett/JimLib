@@ -10,17 +10,17 @@ namespace JimBobBennett.JimLib.Commands
     /// default return value for the CanExecute
     /// method is 'true'.
     /// </summary>
-    public class RelayCommand : ICommand
+    public class RelayCommand<T> : ICommand
     {
-        readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;        
+        private readonly Action<T> _execute;
+        private readonly Predicate<T> _canExecute;        
         
         /// <summary>
         /// Creates a new command.
         /// </summary>
         /// <param name="execute">The execution logic.</param>
         /// <param name="canExecute">The execution status logic.</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        public RelayCommand(Action<T> execute, Predicate<T> canExecute = null)
         {
             if (execute == null)
                 throw new ArgumentNullException("execute");
@@ -31,7 +31,7 @@ namespace JimBobBennett.JimLib.Commands
         
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null || _canExecute(parameter);
+            return _canExecute == null || ((parameter is T || parameter == null) && _canExecute((T)parameter));
         }
 
         public event EventHandler CanExecuteChanged;
@@ -45,7 +45,22 @@ namespace JimBobBennett.JimLib.Commands
         public void Execute(object parameter)
         {
             if (CanExecute(parameter))
-                _execute(parameter);
+                _execute((T)parameter);
+        }
+    }
+
+    public class RelayCommand : RelayCommand<object>
+    {
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+            : base(execute, canExecute)
+        {
+        }
+
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
+            : base(o => execute(), o => canExecute == null || canExecute())
+        {
+            if (execute == null)
+                throw new ArgumentNullException("execute");
         }
     }
 }

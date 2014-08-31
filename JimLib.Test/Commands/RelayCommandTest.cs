@@ -34,8 +34,16 @@ namespace JimBobBennett.JimLib.Test.Commands
         [ExpectedException(typeof(ArgumentNullException))]
         public void ExecuteCannotBeNull()
         {
-// ReSharper disable once UnusedVariable
-            var command = new RelayCommand(null);
+            // ReSharper disable once UnusedVariable
+            var command = new RelayCommand((Action<object>)null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ExecuteCannotBeNullForUntyped()
+        {
+            // ReSharper disable once UnusedVariable
+            var command = new RelayCommand((Action)null);
         }
 
         [Test]
