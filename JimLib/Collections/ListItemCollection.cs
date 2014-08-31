@@ -11,14 +11,17 @@ namespace JimBobBennett.JimLib.Collections
         private readonly object _syncObj = new object();
         private readonly ObservableCollectionEx<ListItemInnerCollection<T>> _list;
         private IEnumerable<string> _titleSortOrder;
-        private DefinedSortOrderComparer<ListItemInnerCollection<T>, string> _comparer;
+        private IComparer<ListItemInnerCollection<T>> _comparer;
+        private bool _sortTitleAlphabetically;
 
-        private ListItemCollection(ObservableCollectionEx<ListItemInnerCollection<T>> list) : base(list)
+        private ListItemCollection(ObservableCollectionEx<ListItemInnerCollection<T>> list)
+            : base(list)
         {
             _list = list;
         }
 
-        public ListItemCollection() : this(new ObservableCollectionEx<ListItemInnerCollection<T>>())
+        public ListItemCollection()
+            : this(new ObservableCollectionEx<ListItemInnerCollection<T>>())
         {
 
         }
@@ -215,6 +218,40 @@ namespace JimBobBennett.JimLib.Collections
             }
         }
 
+        public void ClearAndAddRange(IEnumerable<T> items, Func<T, string> titleFunc)
+        {
+            lock (_syncObj)
+            {
+                var comparer = _comparer;
+
+                if (comparer != null)
+                    _list.StopEvents = true;
+
+                try
+                {
+                    foreach (var item in items)
+                    {
+                        var title = titleFunc(item);
+
+                        var group = this.FirstOrDefault(g => g.Title == title);
+
+                        if (group == null)
+                            AddGroup(title, item.AsList());
+                        else
+                            group.Add(item);
+                    }
+
+                    if (comparer != null)
+                        Sort();
+                }
+                finally
+                {
+                    if (comparer != null)
+                        _list.StopEvents = false;
+                }
+            }
+        }
+
         public IEnumerable<string> TitleSortOrder
         {
             get { return _titleSortOrder; }
@@ -224,10 +261,24 @@ namespace JimBobBennett.JimLib.Collections
 
                 if (_titleSortOrder != null)
                     _comparer = new DefinedSortOrderComparer<ListItemInnerCollection<T>, string>(_titleSortOrder, i => i.Title);
+                else if (SortTitleAlphabetically)
+                    _comparer = new AlphabeticalTitleComparer<T>();
                 else
                     _comparer = null;
 
                 Sort();
+            }
+        }
+
+        public bool SortTitleAlphabetically
+        {
+            get { return _sortTitleAlphabetically; }
+            set
+            {
+                if (_sortTitleAlphabetically == value) return;
+
+                _sortTitleAlphabetically = value;
+                _comparer = new AlphabeticalTitleComparer<T>();
             }
         }
 

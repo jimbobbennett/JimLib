@@ -591,5 +591,37 @@ namespace JimBobBennett.JimLib.Test.Collections
             list[0].Title.Should().Be("Dave");
             list[1].Title.Should().Be("Bob");
         }
+
+
+        [Test]
+        public void ClearAndAddRangeClearsAndAddsARangeFromEnumerableAndFunc()
+        {
+            var list = new ListItemCollection<string> {SortTitleAlphabetically = true};
+            
+            var toAdd = new List<string>
+            {
+                "Foo",
+                "Hello",
+                "Bar",
+                "FooBar",
+                "HelloWorld"
+            };
+            
+            list.ClearAndAddRange(toAdd, s => s.Substring(0, 1));
+
+            list.Count.Should().Be(3);
+
+            list[0].Title.Should().Be("B");
+            list[0].Should().OnlyContain(s => s == "Bar");
+            list[0].Count.Should().Be(1);
+
+            list[1].Title.Should().Be("F");
+            list[1].Should().OnlyContain(s => s == "Foo" || s == "FooBar");
+            list[1].Count.Should().Be(2);
+
+            list[2].Title.Should().Be("H");
+            list[2].Should().OnlyContain(s => s == "Hello" || s == "HelloWorld");
+            list[2].Count.Should().Be(2);
+        }
     }
 }
