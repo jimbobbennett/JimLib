@@ -600,6 +600,7 @@ namespace JimBobBennett.JimLib.Test.Collections
             
             var toAdd = new List<string>
             {
+                "xxx",
                 "Foo",
                 "Hello",
                 "Bar",
@@ -607,9 +608,9 @@ namespace JimBobBennett.JimLib.Test.Collections
                 "HelloWorld"
             };
             
-            list.ClearAndAddRange(toAdd, s => s.Substring(0, 1));
+            list.ClearAndAddRange(toAdd, s => s.Substring(0, 1).ToUpper());
 
-            list.Count.Should().Be(3);
+            list.Count.Should().Be(4);
 
             list[0].Title.Should().Be("B");
             list[0].Should().OnlyContain(s => s == "Bar");
@@ -622,6 +623,10 @@ namespace JimBobBennett.JimLib.Test.Collections
             list[2].Title.Should().Be("H");
             list[2].Should().OnlyContain(s => s == "Hello" || s == "HelloWorld");
             list[2].Count.Should().Be(2);
+
+            list[3].Title.Should().Be("X");
+            list[3].Should().OnlyContain(s => s == "xxx");
+            list[3].Count.Should().Be(1);
         }
     }
 }
