@@ -306,6 +306,17 @@ namespace JimBobBennett.JimLib.Test.Mvvm
         }
 
         [Test]
+        public async Task RunActionIsRunAndReturnsResult()
+        {
+            var vm = new ViewModelWithEvents();
+#pragma warning disable 1998
+            var isRun = await vm.RunWithBusyIndicatorAsync(async () => true);
+#pragma warning restore 1998
+
+            isRun.Should().BeTrue();
+        }
+
+        [Test]
         public async Task BusyIndicatorIsToggledAroundRunAction()
         {
             var vm = new ViewModelWithEvents();

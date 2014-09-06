@@ -109,6 +109,20 @@ namespace JimBobBennett.JimLib.Mvvm
             }
         }
 
+        protected internal async Task<TResult> RunWithBusyIndicatorAsync<TResult>(Func<Task<TResult>> action, string message = default(string))
+        {
+            try
+            {
+                IsBusy = true;
+                BusyMessage = message;
+                return await action();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         [NotifyPropertyChangeDependency("IsActive")]
         public bool IsBusy
         {
