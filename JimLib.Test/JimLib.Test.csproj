@@ -64,6 +64,7 @@
     <Compile Include="Extensions\CollectionExtensionsTest.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
+    <Compile Include="Extensions\PropertyChangedEventArgsExtensionTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Extensions\TypeExtensionsTest.cs" />
     <Compile Include="Extensions\XmlExtensionsTest.cs" />
