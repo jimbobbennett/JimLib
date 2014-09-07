@@ -96,22 +96,23 @@ namespace JimBobBennett.JimLib.Events
         public void RemoveEventHandler<TEventArgs>(string eventName, EventHandler<TEventArgs> value)
             where TEventArgs : EventArgs
         {
-            RemoveEventHandlerImpl(eventName, value.Target);
+            RemoveEventHandlerImpl(eventName, value.Target, value.GetMethodInfo());
         }
 
         public void RemoveEventHandler(string eventName, EventHandler value)
         {
-            RemoveEventHandlerImpl(eventName, value.Target);
+            RemoveEventHandlerImpl(eventName, value.Target, value.GetMethodInfo());
         }
 
-        private void RemoveEventHandlerImpl(string eventName, object handlerTarget)
+        private void RemoveEventHandlerImpl(string eventName, object handlerTarget, MemberInfo methodInfo)
         {
             lock (_syncObj)
             {
                 List<Tuple<WeakReference, MethodInfo>> target;
                 if (_eventHandlers.TryGetValue(eventName, out target))
                 {
-                    foreach (var tuple in target.Where(t => t.Item1.Target == handlerTarget).ToList())
+                    foreach (var tuple in target.Where(t => t.Item1.Target == handlerTarget &&
+                        t.Item2.Name == methodInfo.Name).ToList())
                         target.Remove(tuple);
                 }
             }
