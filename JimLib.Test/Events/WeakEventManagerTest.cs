@@ -15,19 +15,19 @@ namespace JimBobBennett.JimLib.Test.Events
             {
                 add
                 {
-                    var manager = WeakEventManager<EventFirer, EventArgs<string>>.GetWeakEventManager(this);
+                    var manager = WeakEventManager.GetWeakEventManager(this);
                     manager.AddEventHandler("MyEvent", value);
                 }
                 remove
                 {
-                    var manager = WeakEventManager<EventFirer, EventArgs<string>>.GetWeakEventManager(this);
+                    var manager = WeakEventManager.GetWeakEventManager(this);
                     manager.RemoveEventHandler("MyEvent", value);
                 }
             }
 
             public void OnMyEvent(string s)
             {
-                var manager = WeakEventManager<EventFirer, EventArgs<string>>.GetWeakEventManager(this);
+                var manager = WeakEventManager.GetWeakEventManager(this);
                 manager.HandleEvent(this, new EventArgs<string>(s), "MyEvent");    
             }
 
@@ -36,19 +36,19 @@ namespace JimBobBennett.JimLib.Test.Events
             {
                 add
                 {
-                    var manager = WeakEventManager<EventFirer, EventArgs>.GetWeakEventManager(this);
+                    var manager = WeakEventManager.GetWeakEventManager(this);
                     manager.AddEventHandler("MySimpleEvent", value);
                 }
                 remove
                 {
-                    var manager = WeakEventManager<EventFirer, EventArgs>.GetWeakEventManager(this);
+                    var manager = WeakEventManager.GetWeakEventManager(this);
                     manager.RemoveEventHandler("MySimpleEvent", value);
                 }
             }
 
             public void OnMySimpleEvent()
             {
-                var manager = WeakEventManager<EventFirer, EventArgs>.GetWeakEventManager(this);
+                var manager = WeakEventManager.GetWeakEventManager(this);
                 manager.HandleEvent(this, EventArgs.Empty, "MySimpleEvent");
             }
         }
@@ -73,6 +73,22 @@ namespace JimBobBennett.JimLib.Test.Events
             eventFirer.OnMyEvent("FooBar");
 
             result.Should().Be("FooBar");
+        }
+
+        [Test]
+        public void FiringEventFiresToMultipleHandlers()
+        {
+            string result1 = null;
+            string result2 = null;
+
+            var eventFirer = new EventFirer();
+
+            eventFirer.MyEvent += (s, e) => { result1 = e.Value; };
+            eventFirer.MyEvent += (s, e) => { result2 = e.Value; };
+            eventFirer.OnMyEvent("FooBar");
+
+            result1.Should().Be("FooBar");
+            result2.Should().Be("FooBar");
         }
 
         [Test]

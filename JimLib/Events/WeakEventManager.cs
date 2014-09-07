@@ -2,24 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JimBobBennett.JimLib.Extensions;
 
 namespace JimBobBennett.JimLib.Events
 {
-    public class WeakEventManager<TSource, TEventArgs> where TEventArgs : EventArgs 
-        where TSource : class
+    public class WeakEventManager
     {
 // ReSharper disable once StaticFieldInGenericType
         private static readonly object SyncObj = new object();
-        private static readonly Dictionary<WeakReference<TSource>, WeakEventManager<TSource, TEventArgs>> WeakEventManagers = new Dictionary<WeakReference<TSource>, WeakEventManager<TSource, TEventArgs>>();
+        private static readonly Dictionary<WeakReference<object>, WeakEventManager> WeakEventManagers = new Dictionary<WeakReference<object>, WeakEventManager>();
 
-        public static WeakEventManager<TSource, TEventArgs> GetWeakEventManager(TSource source)
+        public static WeakEventManager GetWeakEventManager(object source)
         {
             lock (SyncObj)
             {
                 foreach (var kvp in WeakEventManagers.ToList())
                 {
-                    TSource target;
+                    object target;
 
                     if (kvp.Key.TryGetTarget(out target))
                     {
@@ -30,8 +28,8 @@ namespace JimBobBennett.JimLib.Events
                         WeakEventManagers.Remove(kvp.Key);
                 }
 
-                var manager = new WeakEventManager<TSource, TEventArgs>();
-                WeakEventManagers.Add(new WeakReference<TSource>(source), manager);
+                var manager = new WeakEventManager();
+                WeakEventManagers.Add(new WeakReference<object>(source), manager);
                 
                 return manager;
             }
@@ -44,7 +42,8 @@ namespace JimBobBennett.JimLib.Events
         {
         }
 
-        public void AddEventHandler(string eventName, EventHandler<TEventArgs> value)
+        public void AddEventHandler<TEventArgs>(string eventName, EventHandler<TEventArgs> value)
+            where TEventArgs : EventArgs
         {
             BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
         }
@@ -56,11 +55,6 @@ namespace JimBobBennett.JimLib.Events
 
         private void BuildEventHandler(string eventName, object handlerTarget, MethodInfo methodInfo)
         {
-            var sourceEvent = typeof(TSource).GetAllEvents().FirstOrDefault(e => e.Name == eventName);
-
-            if (sourceEvent == null)
-                throw new ArgumentException("Event " + eventName + " not found", "eventName");
-
             lock (_syncObj)
             {
                 List<Tuple<WeakReference, MethodInfo>> target;
@@ -74,7 +68,7 @@ namespace JimBobBennett.JimLib.Events
             }
         }
 
-        public void HandleEvent(object sender, TEventArgs args, string eventName)
+        public void HandleEvent(object sender, object args, string eventName)
         {
             var toRaise = new List<Tuple<object, MethodInfo>>();
 
@@ -99,7 +93,8 @@ namespace JimBobBennett.JimLib.Events
                 tuple.Item2.Invoke(tuple.Item1, new[] {sender, args});
         }
 
-        public void RemoveEventHandler(string eventName, EventHandler<TEventArgs> value)
+        public void RemoveEventHandler<TEventArgs>(string eventName, EventHandler<TEventArgs> value)
+            where TEventArgs : EventArgs
         {
             RemoveEventHandlerImpl(eventName, value.Target);
         }
