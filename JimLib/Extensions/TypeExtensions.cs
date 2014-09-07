@@ -22,7 +22,7 @@ namespace JimBobBennett.JimLib.Extensions
         {
             var props = type.GetTypeInfo().DeclaredProperties.ToList();
 
-            if (type != typeof (object))
+            if (type != typeof(object))
             {
                 var baseProps = GetAllProperties(type.GetTypeInfo().BaseType);
                 foreach (var propertyInfo in baseProps.Where(pi => props.All(p => p.Name != pi.Name)))
@@ -30,6 +30,48 @@ namespace JimBobBennett.JimLib.Extensions
             }
 
             return props;
+        }
+
+        /// <summary>
+        /// Gets all the events on the given type and all base types.
+        /// This is provided for portable libraries where only the Declared events are available from the TypeInfo
+        /// </summary>
+        /// <param name="type">The type to get the events on</param>
+        /// <returns>An enumerable of <see cref="EventInfo"/> for the events on the type and all base types</returns>
+        [Pure]
+        public static IEnumerable<EventInfo> GetAllEvents(this Type type)
+        {
+            var events = type.GetTypeInfo().DeclaredEvents.ToList();
+
+            if (type != typeof(object))
+            {
+                var baseEvents = GetAllEvents(type.GetTypeInfo().BaseType);
+                foreach (var eventInfo in baseEvents.Where(pi => events.All(p => p.Name != pi.Name)))
+                    events.Add(eventInfo);
+            }
+
+            return events;
+        }
+
+        /// <summary>
+        /// Gets all the methods on the given type and all base types.
+        /// This is provided for portable libraries where only the Declared methods are available from the TypeInfo
+        /// </summary>
+        /// <param name="type">The type to get the methods on</param>
+        /// <returns>An enumerable of <see cref="MethodInfo"/> for the methods on the type and all base types</returns>
+        [Pure]
+        public static IEnumerable<MethodInfo> GetAllMethods(this Type type)
+        {
+            var methods = type.GetTypeInfo().DeclaredMethods.ToList();
+
+            if (type != typeof(object))
+            {
+                var baseMethods = GetAllMethods(type.GetTypeInfo().BaseType);
+                foreach (var methodInfo in baseMethods.Where(pi => methods.All(p => p.Name != pi.Name)))
+                    methods.Add(methodInfo);
+            }
+
+            return methods;
         }
 
         /// <summary>

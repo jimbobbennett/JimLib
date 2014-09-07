@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using FluentAssertions;
@@ -16,23 +17,39 @@ namespace JimBobBennett.JimLib.Test.Extensions
             public string AString { get; set; }
             public int AInt { get; set; }
             public virtual string VirtualString { get; set; }
+
+            public virtual void AMethod() { }
+
+            public event EventHandler AEvent;
         }
 
         public class B : A
         {
             public string BString { get; set; }
             public int BInt { get; set; }
+
+            public void BMethod() { }
+
+            public event EventHandler BEvent;
         }
 
         public class C : B
         {
             public string CString { get; set; }
             public int CInt { get; set; }
+
+            public void CMethod() { }
+
+            public event EventHandler CEvent;
         }
 
         public class D : A
         {
             public override string VirtualString { get; set; }
+
+            public override void AMethod() { }
+
+            public event EventHandler DEvent;
         }
 
         [Test]
@@ -78,7 +95,78 @@ namespace JimBobBennett.JimLib.Test.Extensions
         public void GetAllPropertiesForOverriddenPropertiesDoesntHaveDuplicates()
         {
             var properties = typeof(D).GetAllProperties().ToList();
-            var propDict = properties.ToDictionary(p => p.Name, p => p);
+            var dictionary = properties.ToDictionary(p => p.Name, p => p);
+        }
+
+        [Test]
+        public void BaseClassReturnsItsOwnMethods()
+        {
+            var methods = typeof(A).GetAllMethods().ToList();
+
+            methods.Should().Contain(p => p.Name == "AMethod");
+        }
+
+        [Test]
+        public void DerivedClassReturnsItsOwnMethodsAndThoseOfTheBase()
+        {
+            var methods = typeof(B).GetAllMethods().ToList();
+
+            methods.Should().Contain(p => p.Name == "AMethod");
+            methods.Should().Contain(p => p.Name == "BMethod");
+        }
+
+        [Test]
+        public void DerivedClassReturnsItsOwnMethodsAndThoseOfAllBaseClasses()
+        {
+            var methods = typeof(C).GetAllMethods().ToList();
+
+            methods.Should().Contain(p => p.Name == "AMethod");
+            methods.Should().Contain(p => p.Name == "BMethod");
+            methods.Should().Contain(p => p.Name == "CMethod");
+        }
+
+        [Test]
+        public void GetAllMethodsForOverriddenMethodsDoesntHaveDuplicates()
+        {
+            var methods = typeof(D).GetAllMethods().ToList();
+            var dictionary = methods.ToDictionary(m => m.Name, p => p);
+        }
+
+        [Test]
+        public void BaseClassReturnsItsOwnEvents()
+        {
+            var events = typeof(A).GetAllEvents().ToList();
+
+            events.Should().HaveCount(1);
+            events.Should().Contain(p => p.Name == "AEvent");
+        }
+
+        [Test]
+        public void DerivedClassReturnsItsOwnEventsAndThoseOfTheBase()
+        {
+            var events = typeof(B).GetAllEvents().ToList();
+
+            events.Should().HaveCount(2);
+            events.Should().Contain(p => p.Name == "AEvent");
+            events.Should().Contain(p => p.Name == "BEvent");
+        }
+
+        [Test]
+        public void DerivedClassReturnsItsOwnEventsAndThoseOfAllBaseClasses()
+        {
+            var events = typeof(C).GetAllEvents().ToList();
+
+            events.Should().HaveCount(3);
+            events.Should().Contain(p => p.Name == "AEvent");
+            events.Should().Contain(p => p.Name == "BEvent");
+            events.Should().Contain(p => p.Name == "CEvent");
+        }
+
+        [Test]
+        public void GetAllEventsForOverriddenEventsDoesntHaveDuplicates()
+        {
+            var events = typeof(D).GetAllEvents().ToList();
+            var dictionary = events.ToDictionary(m => m.Name, p => p);
         }
 
         [Test]

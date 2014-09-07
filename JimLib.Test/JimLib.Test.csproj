@@ -61,6 +61,7 @@
     <Compile Include="Commands\AsyncCommandTest.cs" />
     <Compile Include="Commands\RelayCommandTest.cs" />
     <Compile Include="Events\EventArgsTest.cs" />
+    <Compile Include="Events\WeakEventManagerTest.cs" />
     <Compile Include="Extensions\CollectionExtensionsTest.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
