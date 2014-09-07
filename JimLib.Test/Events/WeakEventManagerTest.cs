@@ -16,7 +16,7 @@ namespace JimBobBennett.JimLib.Test.Events
                 add
                 {
                     var manager = WeakEventManager<EventFirer, EventArgs<string>>.GetWeakEventManager(this);
-                    manager.AddEventHandler(this, "MyEvent", value);
+                    manager.AddEventHandler("MyEvent", value);
                 }
                 remove
                 {
@@ -37,7 +37,7 @@ namespace JimBobBennett.JimLib.Test.Events
                 add
                 {
                     var manager = WeakEventManager<EventFirer, EventArgs>.GetWeakEventManager(this);
-                    manager.AddEventHandler(this, "MySimpleEvent", value);
+                    manager.AddEventHandler("MySimpleEvent", value);
                 }
                 remove
                 {
@@ -180,6 +180,32 @@ namespace JimBobBennett.JimLib.Test.Events
             reference.Target.Should().BeNull();
 
             GC.KeepAlive(eventFirer);
+        }
+
+        [Test]
+        public async Task UsingWeakEventManagerDoesntKeepAlive()
+        {
+            WeakReference reference;
+
+            {
+                var eventFirer = new EventFirer();
+                reference = new WeakReference(eventFirer);
+
+                var handler = new Handler<EventArgs>();
+                eventFirer.MySimpleEvent += handler.HandleEvent;
+            }
+            
+            var pos = 0;
+            while (reference.Target != null && pos < 10)
+            {
+                await Task.Delay(1000);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                pos++;
+            }
+
+            reference.Target.Should().BeNull();
         }
     }
 }

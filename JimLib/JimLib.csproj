@@ -48,6 +48,7 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Encryption\AESGCM.cs" />
     <Compile Include="Events\EventArgs.cs" />
+    <Compile Include="Events\IWeakEventManager.cs" />
     <Compile Include="Events\WeakEventManager.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />

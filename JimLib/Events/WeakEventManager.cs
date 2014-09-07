@@ -6,48 +6,57 @@ using JimBobBennett.JimLib.Extensions;
 
 namespace JimBobBennett.JimLib.Events
 {
-    public class WeakEventManager<TSource, TEventArgs> : IDisposable where TEventArgs : EventArgs
+    public class WeakEventManager<TSource, TEventArgs> where TEventArgs : EventArgs 
+        where TSource : class
     {
 // ReSharper disable once StaticFieldInGenericType
         private static readonly object SyncObj = new object();
-        private static readonly Dictionary<TSource, WeakEventManager<TSource, TEventArgs>> WeakEventManagers = new Dictionary<TSource, WeakEventManager<TSource, TEventArgs>>();
+        private static readonly Dictionary<WeakReference<TSource>, WeakEventManager<TSource, TEventArgs>> WeakEventManagers = new Dictionary<WeakReference<TSource>, WeakEventManager<TSource, TEventArgs>>();
 
         public static WeakEventManager<TSource, TEventArgs> GetWeakEventManager(TSource source)
         {
             lock (SyncObj)
             {
-                WeakEventManager<TSource, TEventArgs> manager;
-                if (!WeakEventManagers.TryGetValue(source, out manager))
+                foreach (var kvp in WeakEventManagers.ToList())
                 {
-                    manager = new WeakEventManager<TSource, TEventArgs>();
-                    WeakEventManagers.Add(source, manager);
+                    TSource target;
+
+                    if (kvp.Key.TryGetTarget(out target))
+                    {
+                        if (ReferenceEquals(target, source))
+                            return kvp.Value;
+                    }
+                    else
+                        WeakEventManagers.Remove(kvp.Key);
                 }
 
+                var manager = new WeakEventManager<TSource, TEventArgs>();
+                WeakEventManagers.Add(new WeakReference<TSource>(source), manager);
+                
                 return manager;
             }
         }
 
         private readonly object _syncObj = new object();
         private readonly Dictionary<string, List<Tuple<WeakReference, MethodInfo>>> _eventHandlers = new Dictionary<string, List<Tuple<WeakReference, MethodInfo>>>();
-        
-        public void Dispose()
+
+        private WeakEventManager()
         {
-            
         }
 
-        public void AddEventHandler(TSource source, string eventName, EventHandler<TEventArgs> value)
+        public void AddEventHandler(string eventName, EventHandler<TEventArgs> value)
         {
-            BuildEventHandler(source, eventName, value.Target, value.GetMethodInfo());
+            BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
         }
 
-        public void AddEventHandler(TSource source, string eventName, EventHandler value)
+        public void AddEventHandler(string eventName, EventHandler value)
         {
-            BuildEventHandler(source, eventName, value.Target, value.GetMethodInfo());
+            BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
         }
 
-        private void BuildEventHandler(TSource source, string eventName, object handlerTarget, MethodInfo methodInfo)
+        private void BuildEventHandler(string eventName, object handlerTarget, MethodInfo methodInfo)
         {
-            var sourceEvent = source.GetType().GetAllEvents().FirstOrDefault(e => e.Name == eventName);
+            var sourceEvent = typeof(TSource).GetAllEvents().FirstOrDefault(e => e.Name == eventName);
 
             if (sourceEvent == null)
                 throw new ArgumentException("Event " + eventName + " not found", "eventName");
