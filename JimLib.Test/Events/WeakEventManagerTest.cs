@@ -16,7 +16,7 @@ namespace JimBobBennett.JimLib.Test.Events
                 add
                 {
                     var manager = WeakEventManager<EventFirer, EventArgs<string>>.GetWeakEventManager(this);
-                    manager.AddEventHandler("MyEvent", value);
+                    manager.AddEventHandler(this, "MyEvent", value);
                 }
                 remove
                 {
@@ -37,7 +37,7 @@ namespace JimBobBennett.JimLib.Test.Events
                 add
                 {
                     var manager = WeakEventManager<EventFirer, EventArgs>.GetWeakEventManager(this);
-                    manager.AddEventHandler("MySimpleEvent", value);
+                    manager.AddEventHandler(this, "MySimpleEvent", value);
                 }
                 remove
                 {

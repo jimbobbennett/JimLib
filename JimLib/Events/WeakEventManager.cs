@@ -19,7 +19,7 @@ namespace JimBobBennett.JimLib.Events
                 WeakEventManager<TSource, TEventArgs> manager;
                 if (!WeakEventManagers.TryGetValue(source, out manager))
                 {
-                    manager = new WeakEventManager<TSource, TEventArgs>(source);
+                    manager = new WeakEventManager<TSource, TEventArgs>();
                     WeakEventManagers.Add(source, manager);
                 }
 
@@ -28,35 +28,26 @@ namespace JimBobBennett.JimLib.Events
         }
 
         private readonly object _syncObj = new object();
-        private readonly TSource _source;
         private readonly Dictionary<string, List<Tuple<WeakReference, MethodInfo>>> _eventHandlers = new Dictionary<string, List<Tuple<WeakReference, MethodInfo>>>();
-
-        private WeakEventManager(TSource source)
-        {
-            if (Equals(source, null))
-                throw new ArgumentNullException();
-
-            _source = source;
-        }
-
+        
         public void Dispose()
         {
             
         }
 
-        public void AddEventHandler(string eventName, EventHandler<TEventArgs> value)
+        public void AddEventHandler(TSource source, string eventName, EventHandler<TEventArgs> value)
         {
-            BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
+            BuildEventHandler(source, eventName, value.Target, value.GetMethodInfo());
         }
 
-        public void AddEventHandler(string eventName, EventHandler value)
+        public void AddEventHandler(TSource source, string eventName, EventHandler value)
         {
-            BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
+            BuildEventHandler(source, eventName, value.Target, value.GetMethodInfo());
         }
 
-        private void BuildEventHandler(string eventName, object handlerTarget, MethodInfo methodInfo)
+        private void BuildEventHandler(TSource source, string eventName, object handlerTarget, MethodInfo methodInfo)
         {
-            var sourceEvent = _source.GetType().GetAllEvents().FirstOrDefault(e => e.Name == eventName);
+            var sourceEvent = source.GetType().GetAllEvents().FirstOrDefault(e => e.Name == eventName);
 
             if (sourceEvent == null)
                 throw new ArgumentException("Event " + eventName + " not found", "eventName");
