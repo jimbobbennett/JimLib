@@ -68,7 +68,7 @@ namespace JimBobBennett.JimLib.Events
             }
         }
 
-        public void HandleEvent(object sender, object args, string eventName)
+        public void RaiseEvent(object sender, object args, string eventName)
         {
             var toRaise = new List<Tuple<object, MethodInfo>>();
 

@@ -28,7 +28,7 @@ namespace JimBobBennett.JimLib.Test.Events
             public void OnMyEvent(string s)
             {
                 var manager = WeakEventManager.GetWeakEventManager(this);
-                manager.HandleEvent(this, new EventArgs<string>(s), "MyEvent");    
+                manager.RaiseEvent(this, new EventArgs<string>(s), "MyEvent");    
             }
 
 
@@ -49,7 +49,7 @@ namespace JimBobBennett.JimLib.Test.Events
             public void OnMySimpleEvent()
             {
                 var manager = WeakEventManager.GetWeakEventManager(this);
-                manager.HandleEvent(this, EventArgs.Empty, "MySimpleEvent");
+                manager.RaiseEvent(this, EventArgs.Empty, "MySimpleEvent");
             }
         }
 
