@@ -109,16 +109,20 @@ namespace JimBobBennett.JimLib.Test.Extensions
         [Test]
         public void UpdateToMatchUpdatesChangedItems()
         {
+            var oldFirst = new CollectionItem("First", 1);
+
             var oc = new List<CollectionItem>
             {
-                new CollectionItem("First", 1),
+                oldFirst,
                 new CollectionItem("Second", 2),
                 new CollectionItem("Third", 3)
             };
 
+            var newFirst = new CollectionItem("First", 100);
+
             var toChange = new List<CollectionItem>
             {
-                new CollectionItem("First", 100),
+                newFirst,
                 new CollectionItem("Second", 200),
                 new CollectionItem("Third", 3)
             };
@@ -139,6 +143,9 @@ namespace JimBobBennett.JimLib.Test.Extensions
             oc.Single(i => i.Key == "First").Value.Should().Be(100);
             oc.Single(i => i.Key == "Second").Value.Should().Be(200);
             oc.Single(i => i.Key == "Third").Value.Should().Be(3);
+
+            oc.Single(i => i.Key == "First").Should().BeSameAs(oldFirst);
+            oc.Single(i => i.Key == "First").Should().NotBeSameAs(newFirst);
         }
 
         [Test]
