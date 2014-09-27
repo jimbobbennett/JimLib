@@ -45,6 +45,7 @@
     <Compile Include="Commands\AsyncCommand.cs" />
     <Compile Include="Commands\AsyncCommandBase.cs" />
     <Compile Include="Commands\IAsyncCommand.cs" />
+    <Compile Include="Commands\IRaiseCanExecuteChanged.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Encryption\AESGCM.cs" />
     <Compile Include="Events\EventArgs.cs" />

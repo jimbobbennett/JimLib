@@ -10,7 +10,7 @@ namespace JimBobBennett.JimLib.Commands
     /// default return value for the CanExecute
     /// method is 'true'.
     /// </summary>
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand<T> : ICommand, IRaiseCanExecuteChanged
     {
         private readonly Action<T> _execute;
         private readonly Predicate<T> _canExecute;        

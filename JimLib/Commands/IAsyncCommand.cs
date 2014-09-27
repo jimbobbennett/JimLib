@@ -3,10 +3,9 @@ using System.Windows.Input;
 
 namespace JimBobBennett.JimLib.Commands
 {
-    public interface IAsyncCommand<T> : ICommand
+    public interface IAsyncCommand<T> : ICommand, IRaiseCanExecuteChanged
     {
         Task ExecuteAsync(T parameter);
-        void RaiseCanExecuteChanged();
     }
 
     public interface IAsyncCommand : IAsyncCommand<object>
