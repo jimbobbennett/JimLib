@@ -38,7 +38,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\AlphabeticalTitleComparer.cs" />
+    <Compile Include="Collections\CacheWithFail.cs" />
     <Compile Include="Collections\DefinedSortOrderComparer.cs" />
+    <Compile Include="Collections\Enums.cs" />
     <Compile Include="Collections\ListItemCollection.cs" />
     <Compile Include="Collections\ListItemInnerCollection.cs" />
     <Compile Include="Collections\ObservableCollectionEx.cs" />
@@ -74,6 +76,9 @@
   <ItemGroup>
     <Reference Include="crypto">
       <HintPath>..\packages\Portable.BouncyCastle.1.7.0.1\lib\portable-net4+sl5+wp8+win8+wpa81\crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
