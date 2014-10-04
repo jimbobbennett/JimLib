@@ -27,7 +27,7 @@ namespace JimBobBennett.JimLib.Mvvm
 
         private static readonly Dictionary<Type, ClassPropertyMap> PropertyMaps = new Dictionary<Type, ClassPropertyMap>();
         
-        private readonly object _syncObj = new object();
+        private readonly static object SyncObj = new object();
         
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -79,7 +79,7 @@ namespace JimBobBennett.JimLib.Mvvm
 
         private ClassPropertyMap LookUpProperties()
         {
-            lock (_syncObj)
+            lock (SyncObj)
             {
                 ClassPropertyMap classPropertyMap;
                 var type = GetType();
@@ -104,7 +104,7 @@ namespace JimBobBennett.JimLib.Mvvm
                 var dependentProperties = new ReadOnlyDictionary<string, List<string>>(dict);
                 
                 classPropertyMap = new ClassPropertyMap(propertiesByName, dependentProperties);
-                PropertyMaps.Add(type, classPropertyMap);
+                PropertyMaps[type] = classPropertyMap;
 
                 return classPropertyMap;
             }
