@@ -107,5 +107,42 @@ namespace JimBobBennett.JimLib.Test.Collections
 
             called.Should().BeTrue();
         }
+
+        [Test]
+        public async Task ClearClearsTheCache()
+        {
+            var cache = new CacheWithFail<string, Data>();
+            cache.Add("Foo", new Data { String = "Foo", Int = 1 });
+
+            await cache.GetOrAddAsync("Bar", async s => await Task.Run(() => (Data)null));
+
+            cache.Clear();
+
+            Data data;
+            cache.TryGetValue("Foo", out data).Should().Be(CacheState.NotFound);
+        }
+
+        [Test]
+        public async Task ClearClearsTheCacheButNotFailedItems()
+        {
+            var cache = new CacheWithFail<string, Data>();
+            cache.Add("Foo", new Data { String = "Foo", Int = 1 });
+
+            await cache.GetOrAddAsync("Bar", async s => await Task.Run(() => (Data)null));
+
+            cache.Clear();
+
+            Data data;
+            cache.TryGetValue("Foo", out data).Should().Be(CacheState.NotFound);
+
+            var called = false;
+            await cache.GetOrAddAsync("Bar", async s => await Task.Run(() =>
+            {
+                called = true;
+                return (Data)null;
+            }));
+
+            called.Should().BeFalse();
+        }
     }
 }

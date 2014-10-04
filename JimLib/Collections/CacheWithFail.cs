@@ -99,6 +99,12 @@ namespace JimBobBennett.JimLib.Collections
             return result;
         }
 
+        public void Clear()
+        {
+            lock (_cacheSyncObj)
+                _cache.Clear();
+        }
+
         public string DumpCacheAsJson()
         {
             lock (_cacheSyncObj)
