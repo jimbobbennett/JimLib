@@ -37,6 +37,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Async\AsyncHelper.cs" />
     <Compile Include="Collections\AlphabeticalTitleComparer.cs" />
     <Compile Include="Collections\CacheWithFail.cs" />
     <Compile Include="Collections\DefinedSortOrderComparer.cs" />
