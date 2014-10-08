@@ -76,15 +76,25 @@ namespace JimBobBennett.JimLib.Collections
                 _failedCache[id] = DateTime.Now.Add(_failedRetryWaitTime);
         }
 
-        public async Task<T> GetOrAddAsync(TKey id, Func<TKey, Task<T>> loadAction)
+        public bool ContainsKey(TKey key)
+        {
+            lock (_cacheSyncObj)
+                return _cache.ContainsKey(key);
+        }
+
+        public async Task<T> GetOrAddAsync(TKey id, Func<TKey, Task<T>> loadAction, bool forceRefresh = false)
         {
             T result;
-            var cacheResult = TryGetValue(id, out result);
 
-            if (cacheResult == CacheState.Found)
-                return result;
-            if (cacheResult == CacheState.Failed)
-                return null;
+            if (!forceRefresh)
+            {
+                var cacheResult = TryGetValue(id, out result);
+
+                if (cacheResult == CacheState.Found)
+                    return result;
+                if (cacheResult == CacheState.Failed)
+                    return null;
+            }
 
             result = await loadAction(id);
 

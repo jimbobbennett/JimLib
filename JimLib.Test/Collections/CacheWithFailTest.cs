@@ -144,5 +144,31 @@ namespace JimBobBennett.JimLib.Test.Collections
 
             called.Should().BeFalse();
         }
+
+        [TestCase("Foo", true)]
+        [TestCase("Bar", false)]
+        public void ContainsKeyReturnsCorrectValue(string key, bool expected)
+        {
+            var cache = new CacheWithFail<string, Data>();
+            cache.Add("Foo", new Data { String = "Foo", Int = 1 });
+
+            cache.ContainsKey(key).Should().Be(expected);
+        }
+
+        [Test]
+        public async Task ForceReloadForcesAReload()
+        {
+            var cache = new CacheWithFail<string, Data>();
+            cache.Add("Foo", new Data { String = "Foo", Int = 1 });
+            var called = false;
+
+            await cache.GetOrAddAsync("Foo", async s => await Task.Run(() =>
+            {
+                called = true;
+                return new Data { String = "Foo", Int = 1 };
+            }), true);
+
+            called.Should().BeTrue();
+        }
     }
 }
