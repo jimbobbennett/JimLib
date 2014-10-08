@@ -10,13 +10,17 @@ namespace JimBobBennett.JimLib.Collections
     public class ObservableCollectionEx<T>: ObservableCollection<T>
     {
         private bool _stopEvents;
+        private readonly object _syncObj = new object();
+        private readonly List<NotifyCollectionChangedEventArgs> _args = new List<NotifyCollectionChangedEventArgs>();
 
         public ObservableCollectionEx(IEnumerable<T> collection) : base(collection)
         {
+            RaiseResetOnRestartEvents = true;
         }
 
         public ObservableCollectionEx()
         {
+            RaiseResetOnRestartEvents = true;
         }
 
         /// <summary> 
@@ -100,6 +104,8 @@ namespace JimBobBennett.JimLib.Collections
             return updated;
         }
 
+        public bool RaiseResetOnRestartEvents { get; set; }
+
         public bool StopEvents
         {
             get { return _stopEvents; }
@@ -109,8 +115,26 @@ namespace JimBobBennett.JimLib.Collections
 
                 _stopEvents = value;
 
-                if (!_stopEvents)
-                    RaiseReset();
+                List<NotifyCollectionChangedEventArgs> args = null;
+
+                lock (_syncObj)
+                {
+                    if (!_stopEvents)
+                        args = _args.ToList();
+
+                    _args.Clear();
+                }
+
+                if (args != null)
+                {
+                    if (RaiseResetOnRestartEvents)
+                        RaiseReset();
+                    else
+                    {
+                        foreach (var e in args)
+                            OnCollectionChanged(e);
+                    }
+                }
             }
         }
 
@@ -119,8 +143,15 @@ namespace JimBobBennett.JimLib.Collections
         /// </summary>
         private void RaiseReset()
         {
-            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (StopEvents)
+                _args.Add(e);
+            else
+                base.OnCollectionChanged(e);
         }
 
         /// <summary>
@@ -128,7 +159,6 @@ namespace JimBobBennett.JimLib.Collections
         /// </summary>
         private void RaiseAdd(IEnumerable<T> items)
         {
-            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items.ToList()));
         }
 
@@ -137,7 +167,6 @@ namespace JimBobBennett.JimLib.Collections
         /// </summary>
         private void RaiseRemove(IEnumerable<T> items)
         {
-            if (StopEvents) return;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items.ToList()));
         }
     }
