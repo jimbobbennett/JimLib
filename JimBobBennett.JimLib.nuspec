@@ -15,6 +15,7 @@
     <copyright>Copyright 2014</copyright>
     <tags>utility,pcl</tags>
     <dependencies>
+      <dependency id="Newtonsoft.Json" version="6.0.8"/>
       <dependency id="Portable.BouncyCastle" version="1.7.0.1" />
     </dependencies>
   </metadata>
