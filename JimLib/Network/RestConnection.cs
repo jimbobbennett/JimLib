@@ -16,7 +16,7 @@ namespace JimBobBennett.JimLib.Network
     /// Provides the base class for connections - this file can be shared between the mono and win versions
     /// as the using directives match despite the assemblies being different.
     /// </summary>
-    public class RestConnectionBase : IRestConnection
+    public class RestConnection : IRestConnection
     {
         public async Task<byte[]> MakeRawGetRequestAsync(string baseUrl, string resource = "/",
             string username = null, string password = null, int timeout = 10000,

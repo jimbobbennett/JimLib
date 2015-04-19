@@ -67,7 +67,7 @@
     <Compile Include="Mvvm\ViewModelBase.cs" />
     <Compile Include="Network\Enums.cs" />
     <Compile Include="Network\IRestConnection.cs" />
-    <Compile Include="Network\RestConnectionBase.cs" />
+    <Compile Include="Network\RestConnection.cs" />
     <Compile Include="Network\RestResponse.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
