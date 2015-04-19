@@ -16,12 +16,14 @@
     <tags>utility,pcl</tags>
     <dependencies>
       <dependency id="Newtonsoft.Json" version="6.0.8"/>
-      <dependency id="Portable.BouncyCastle" version="1.7.0.1" />
+      <dependency id="Portable.BouncyCastle" version="1.7.0.2" />
+      <dependency id="modernhttpclient" version="2.3.0"/>
+      <dependency id="Microsoft.Net.Http" version="2.2.29" />
     </dependencies>
   </metadata>
   <files>
-    <file src="JimLib\bin\$Configuration$\JimBobBennett.JimLib.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10\JimBobBennett.JimLib.dll" />
-    <file src="JimLib\bin\$Configuration$\JimBobBennett.JimLib.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10\JimBobBennett.JimLib.pdb" />
+    <file src="JimLib\bin\$Configuration$\JimBobBennett.JimLib.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\JimBobBennett.JimLib.dll" />
+    <file src="JimLib\bin\$Configuration$\JimBobBennett.JimLib.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\JimBobBennett.JimLib.pdb" />
     <file src="JimLib\**\*.cs" target="src\JimLib" />
   </files>
 </package>
