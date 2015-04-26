@@ -99,8 +99,8 @@ namespace JimBobBennett.JimLib.Mvvm
         {
             try
             {
-                IsBusy = true;
                 BusyMessage = message;
+                IsBusy = true;
                 await action();
             }
             finally
@@ -113,8 +113,8 @@ namespace JimBobBennett.JimLib.Mvvm
         {
             try
             {
-                IsBusy = true;
                 BusyMessage = message;
+                IsBusy = true;
                 return await action();
             }
             finally
